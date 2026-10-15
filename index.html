@@ -176,6 +176,7 @@ function openCarCardByIndex(index){const c=db.cars[index];if(c)openCarCard(c.id)
 function openCarCard(id){
  const c=db.cars.find(c=>c.id===id);if(!c)return;
  carCardId=id;carCardTab='main';
+ $('carCardFields').innerHTML='';
  carCardDraft={...c,...(c.card||{})};$('carCardTitle').textContent=c.plate+' · '+c.model;
  const card=$('carCard');card.classList.remove('hidden');$('carCardStatus').textContent='';
  openCarTab('main');card.scrollIntoView({block:'nearest',behavior:'smooth'});
