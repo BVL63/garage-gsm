@@ -10,7 +10,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
 #driverJournal .driver-table{border-collapse:separate;border-spacing:0;width:100%}
 #driverJournal .driver-table thead th{position:sticky;top:0;z-index:2;background:#edf3fa;box-shadow:0 1px 0 #cbd3de}
 #driverJournal>.muted{flex-shrink:0;margin-bottom:0}
-</style></head><body><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
+ .car-card{margin:16px 0;border:1px solid #c8d6e5;background:#f4f8fc;border-radius:12px;padding:14px}.car-card-header{display:flex;align-items:center;justify-content:space-between;gap:10px}.car-card-header h3{margin:0}.car-card-header button{font-size:24px;min-width:42px}.car-tabs{display:flex;overflow-x:auto;gap:4px;margin:12px 0;border-bottom:1px solid #c5d5e4}.car-tabs button{flex:0 0 auto;background:#e3eaf2;color:#263c52;padding:10px 11px;border-radius:8px 8px 0 0;margin:0;font-size:13px}.car-tabs button.active{background:#1766a4;color:#fff}.car-card-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 16px}.car-field{display:grid;gap:4px;margin:0;min-width:0}.car-field span{font-size:13px}.car-field textarea{width:100%;box-sizing:border-box;border:1px solid #cbd3de;border-radius:8px;padding:10px;font:inherit}.car-field input[readonly]{background:#e9eff5}.car-card-actions{display:flex;flex-wrap:wrap;gap:6px}.car-card-actions button{margin:0}.directory-data tbody tr[role=button]{cursor:pointer}.directory-data tbody tr[role=button]:focus-visible{outline:2px solid #1766a4} </style></head><body><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown" ontoggle="syncMainMenus(this)"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
   <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button>
@@ -71,9 +71,9 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
     <div class="grid"><div><label>Водитель</label><select id="assignDriver" onchange="renderAssignments()"></select></div><div><label>Закрепить автомобиль</label><select id="assignCar"></select></div></div>
     <button onclick="assignCarToDriver()">Закрепить</button>
     <div id="assignments"></div>
-</div></details></div><div id="dir-cars" class="directory-screen"><div class="directory-table-head"><h3>Автомобили</h3><span id="directoryTotal-cars" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-cars"></thead><tbody id="directoryRows-cars"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Добавить автомобиль</h2><div class="grid"><div><label>Госномер</label><input id="newPlate"></div><div><label>Модель</label><input id="newModel"></div><div><label>Исходный одометр, км</label><input id="newOdo" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Исходный остаток, л</label><input id="newBalance" type="number" min="0" step="0.0001" inputmode="decimal"></div><div><label>Подразделение</label><select id="newCarDept"></select></div><div><label>Летняя норма, л/100 км</label><input id="newSummer" type="number" min="0" step="0.001"></div><div><label>Зимняя норма, л/100 км</label><input id="newWinter" type="number" min="0" step="0.001"></div><div><label>Дата начала норм</label><input id="newFrom" type="date"></div><div><label>Основание (приказ)</label><input id="newOrder"></div></div><button onclick="addCar()">Добавить автомобиль</button></div></details></div><div id="dir-norms" class="directory-screen"><div class="directory-table-head"><h3>Нормы ГСМ</h3><span id="directoryTotal-norms" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-norms"></thead><tbody id="directoryRows-norms"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Изменить нормы (с историей)</h2><div class="grid"><div><label>Автомобиль</label><select id="normCar"></select></div><div><label>Действуют с</label><input type="date" id="normFrom"></div><div><label>Лето, л/100 км</label><input type="number" min="0" step="0.001" id="normSummer"></div><div><label>Зима, л/100 км</label><input type="number" min="0" step="0.001" id="normWinter"></div><div><label>Номер приказа</label><input id="normOrder"></div></div><button onclick="addNorm()">Добавить версию нормы</button><div id="normHistory" class="scroll"></div><hr><h2>Общий зимний период</h2><div class="grid"><div><label>Начало (ММ-ДД)</label><input id="winterStart" placeholder="11-01"></div><div><label>Конец (ММ-ДД)</label><input id="winterEnd" placeholder="03-31"></div></div><button onclick="saveSeasons()">Сохранить период</button><p class="muted">Даты зимнего периода могут переходить через Новый год. Изменение настроек влияет на незакрытые расчёты; для эксплуатации потребуется версионирование календаря сезонов и закрытие месяцев.</p></div></details></div></section><section id="appSettings" class="panel hidden"><h2>⚙ Настройки</h2><p class="muted">Резервное копирование данных этого телефона. Это не синхронизация с другими телефонами.</p>  <div class="backup-tools"><strong>Мои данные на этом телефоне</strong><div><button type="button" onclick="exportLocalBackup()">Сохранить копию</button><button type="button" class="secondary" onclick="document.getElementById('restoreBackupFile').click()">Восстановить из файла</button><input id="restoreBackupFile" type="file" accept=".json,application/json" hidden onchange="restoreLocalBackup(event)"></div><small>Сохраните копию до добавления приложения на главный экран или смены телефона. Копия содержит все локальные журналы и справочники (без фотографий).</small></div>
+</div></details></div><div id="dir-cars" class="directory-screen"><div class="directory-table-head"><h3>Автомобили</h3><span id="directoryTotal-cars" class="muted"></span></div><p class="muted">Нажмите на автомобиль в таблице, чтобы открыть его карточку.</p><div class="scroll"><table class="directory-data"><thead id="directoryHead-cars"></thead><tbody id="directoryRows-cars"></tbody></table></div><section id="carCard" class="car-card hidden" aria-label="Карточка автомобиля"><div class="car-card-header"><h3 id="carCardTitle">Карточка автомобиля</h3><button class="secondary" type="button" onclick="closeCarCard()" aria-label="Закрыть карточку">×</button></div><div class="car-tabs" role="tablist" aria-label="Разделы автомобиля"><button class="active" type="button" onclick="openCarTab('main')" data-car-tab="main">Основная</button><button type="button" onclick="openCarTab('owner')" data-car-tab="owner">Собственник</button><button type="button" onclick="openCarTab('docs')" data-car-tab="docs">Документы</button><button type="button" onclick="openCarTab('specs')" data-car-tab="specs">Характеристики</button></div><div id="carCardFields" class="car-card-fields"></div><p id="carCardStatus" class="muted" role="status"></p><div class="car-card-actions"><button type="button" onclick="saveCarCard()">Сохранить</button><button type="button" class="secondary" onclick="closeCarCard()">Закрыть</button></div></section><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Добавить автомобиль</h2><div class="grid"><div><label>Госномер</label><input id="newPlate"></div><div><label>Модель</label><input id="newModel"></div><div><label>Исходный одометр, км</label><input id="newOdo" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Исходный остаток, л</label><input id="newBalance" type="number" min="0" step="0.0001" inputmode="decimal"></div><div><label>Подразделение</label><select id="newCarDept"></select></div><div><label>Летняя норма, л/100 км</label><input id="newSummer" type="number" min="0" step="0.001"></div><div><label>Зимняя норма, л/100 км</label><input id="newWinter" type="number" min="0" step="0.001"></div><div><label>Дата начала норм</label><input id="newFrom" type="date"></div><div><label>Основание (приказ)</label><input id="newOrder"></div></div><button onclick="addCar()">Добавить автомобиль</button></div></details></div><div id="dir-norms" class="directory-screen"><div class="directory-table-head"><h3>Нормы ГСМ</h3><span id="directoryTotal-norms" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-norms"></thead><tbody id="directoryRows-norms"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Изменить нормы (с историей)</h2><div class="grid"><div><label>Автомобиль</label><select id="normCar"></select></div><div><label>Действуют с</label><input type="date" id="normFrom"></div><div><label>Лето, л/100 км</label><input type="number" min="0" step="0.001" id="normSummer"></div><div><label>Зима, л/100 км</label><input type="number" min="0" step="0.001" id="normWinter"></div><div><label>Номер приказа</label><input id="normOrder"></div></div><button onclick="addNorm()">Добавить версию нормы</button><div id="normHistory" class="scroll"></div><hr><h2>Общий зимний период</h2><div class="grid"><div><label>Начало (ММ-ДД)</label><input id="winterStart" placeholder="11-01"></div><div><label>Конец (ММ-ДД)</label><input id="winterEnd" placeholder="03-31"></div></div><button onclick="saveSeasons()">Сохранить период</button><p class="muted">Даты зимнего периода могут переходить через Новый год. Изменение настроек влияет на незакрытые расчёты; для эксплуатации потребуется версионирование календаря сезонов и закрытие месяцев.</p></div></details></div></section><section id="appSettings" class="panel hidden"><h2>⚙ Настройки</h2><p class="muted">Резервное копирование данных этого телефона. Это не синхронизация с другими телефонами.</p>  <div class="backup-tools"><strong>Мои данные на этом телефоне</strong><div><button type="button" onclick="exportLocalBackup()">Сохранить копию</button><button type="button" class="secondary" onclick="document.getElementById('restoreBackupFile').click()">Восстановить из файла</button><input id="restoreBackupFile" type="file" accept=".json,application/json" hidden onchange="restoreLocalBackup(event)"></div><small>Сохраните копию до добавления приложения на главный экран или смены телефона. Копия содержит все локальные журналы и справочники (без фотографий).</small></div>
 <div class="backup-tools"><strong>Версия приложения</strong><div><button type="button" onclick="updateAlloGarage()" id="updateAppButton">↻ Обновить</button></div><small id="updateAppStatus" role="status">Проверить и загрузить последнюю версию сайта. Журналы на телефоне сохраняются.</small></div>
-<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.20 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
+<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.21 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
 const KEY='garage_gsm_proto_v1';
 
 async function updateAlloGarage(){
@@ -151,16 +151,79 @@ function renderDirectoryTables(){
   departments:{columns:['Подразделение'],rows:db.departments.map(d=>[d.name])},
   drivers:{columns:['Водитель','Основной автомобиль','Закреплено автомобилей'],rows:db.drivers.map(d=>[d.name,db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—',(d.carIds||[]).length])},
   assignments:{columns:['Водитель','Автомобиль','По умолчанию'],rows:db.drivers.flatMap(d=>(d.carIds||[]).map(id=>[d.name,db.cars.find(c=>c.id===id)?.plate||'—',d.defaultCarId===id?'Да':'Нет']))},
-  cars:{columns:['Госномер','Модель','Подразделение','Нач. одометр','Нач. остаток, л'],rows:db.cars.map(c=>[c.plate,c.model,db.departments.find(d=>d.id===c.dept)?.name||'—',c.initialOdo,Number(c.initialFuel||0).toFixed(4)])},
+  cars:{columns:['Госномер','Модель','Подразделение','Нач. одометр','Нач. остаток, л'],rows:db.cars.map(c=>[c.plate,c.model,db.departments.find(d=>d.id===c.dept)?.name||'—',fmtOdo(c.initialOdo),Number(c.initialFuel||0).toFixed(4)])},
   norms:{columns:['Автомобиль','С даты','Лето, л/100 км','Зима, л/100 км','Приказ'],rows:db.cars.flatMap(c=>(c.norms||[]).map(n=>[c.plate,n.from,n.summer,n.winter,n.order||'—']))}
  };
  for(const [id,def] of Object.entries(data)){
   const head=$('directoryHead-'+id),body=$('directoryRows-'+id),count=$('directoryTotal-'+id);
   if(!head||!body)continue;
   head.innerHTML='<tr>'+def.columns.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr>';
-  body.innerHTML=def.rows.map(row=>'<tr>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
+  body.innerHTML=def.rows.map((row,i)=>'<tr'+(id==='cars'?' tabindex="0" role="button" title="Открыть карточку" onclick="openCarCardByIndex('+i+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openCarCardByIndex('+i+')}"':'')+'>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
   if(count)count.textContent='Записей: '+def.rows.length;
  }
+}
+
+
+// Vehicle card: extra fields are optional and never overwrite mileage/fuel history.
+let carCardId=null,carCardTab='main',carCardDraft=null;
+const carFieldSets={
+ main:[['plate','Регистрационный знак'],['make','Марка'],['model','Модель'],['vehicleType','Тип транспортного средства'],['category','Категория ТС'],['year','Год выпуска','number'],['dept','Подразделение','department'],['initialOdo','Исходный одометр, км','readonly'],['initialFuel','Исходный остаток топлива, л','readonly']],
+ owner:[['ownerName','Наименование собственника'],['ownerAddress','Адрес собственника'],['ownerInn','ИНН'],['ownerPhone','Телефон'],['ownerNotes','Примечание','textarea']],
+ docs:[['vin','VIN'],['stsSeries','Серия СТС'],['stsNumber','Номер СТС'],['ptsNumber','ПТС / ЭПТС'],['osagoNumber','Полис ОСАГО'],['osagoUntil','ОСАГО действует до','date'],['inspectionUntil','Техосмотр действует до','date'],['docsNotes','Примечание','textarea']],
+ specs:[['engineModel','Модель двигателя'],['engineNumber','Номер двигателя'],['chassis','Шасси (рама)'],['bodyNumber','Кузов'],['color','Цвет'],['country','Страна производства'],['maxMass','Разрешённая максимальная масса, кг','number'],['emptyMass','Масса без нагрузки, кг','number'],['powerKw','Мощность, кВт','number'],['powerHp','Мощность, л. с.','number'],['fuelType','Марка топлива'],['specNotes','Примечание','textarea']]
+};
+function openCarCardByIndex(index){const c=db.cars[index];if(c)openCarCard(c.id)}
+function openCarCard(id){
+ const c=db.cars.find(c=>c.id===id);if(!c)return;
+ carCardId=id;carCardTab='main';
+ carCardDraft={...c,...(c.card||{})};$('carCardTitle').textContent=c.plate+' · '+c.model;
+ const card=$('carCard');card.classList.remove('hidden');$('carCardStatus').textContent='';
+ openCarTab('main');card.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function closeCarCard(){carCardId=null;carCardDraft=null;$('carCard').classList.add('hidden')}
+function collectCarTab(){
+ if(!carCardDraft)return;
+ for(const [name,,type] of carFieldSets[carCardTab]){
+  if(type==='readonly')continue;
+  const input=$('carField_'+name);if(input)carCardDraft[name]=input.value;
+ }
+}
+function openCarTab(name){
+ if(!carCardDraft||!carFieldSets[name])return;
+ collectCarTab();carCardTab=name;
+ document.querySelectorAll('[data-car-tab]').forEach(b=>{const on=b.dataset.carTab===name;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
+ $('carCardFields').innerHTML=carFieldSets[name].map(([field,label,type])=>{
+  const val=carCardDraft[field]??'';
+  const attr='id="carField_'+field+'"';
+  const control=type==='department'
+    ?'<select '+attr+'>'+db.departments.map(d=>'<option value="'+esc(d.id)+'"'+(d.id===val?' selected':'')+'>'+esc(d.name)+'</option>').join('')+'</select>'
+    :type==='textarea'?'<textarea '+attr+' rows="3">'+esc(val)+'</textarea>'
+    :'<input '+attr+' type="'+(type==='number'?'number':type==='date'?'date':'text')+'" '+(type==='number'?'step="any" ':'')+(type==='readonly'?'readonly ':'')+'value="'+esc(val)+'">';
+  return '<label class="car-field"><span>'+esc(label)+'</span>'+control+'</label>';
+ }).join('');
+}
+function saveCarCard(){
+ if(!carCardDraft||!carCardId)return;
+ collectCarTab();
+ const c=db.cars.find(c=>c.id===carCardId);if(!c)return;
+ const plate=String(carCardDraft.plate||'').trim().toUpperCase();
+ const model=String(carCardDraft.model||'').trim();
+ if(!plate||!model)return alert('Укажите регистрационный знак и модель.');
+ if(db.cars.some(other=>other.id!==c.id&&other.plate.toUpperCase()===plate))return alert('Автомобиль с таким номером уже есть.');
+ if(!db.departments.some(d=>d.id===carCardDraft.dept))return alert('Выберите подразделение.');
+ if(carCardDraft.year!==''&&carCardDraft.year!=null&&(!/^\d{4}$/.test(String(carCardDraft.year))||Number(carCardDraft.year)<1886))return alert('Проверьте год выпуска.');
+ for(const f of ['maxMass','emptyMass','powerKw','powerHp'])if(carCardDraft[f]!==''&&carCardDraft[f]!=null&&(!Number.isFinite(Number(carCardDraft[f]))||Number(carCardDraft[f])<0))return alert('Проверьте числовые характеристики.');
+ c.plate=plate;c.model=model;c.dept=carCardDraft.dept;
+ // Keep existing car IDs, original odometer, original fuel, and historical fuel norms unchanged.
+ const extras={};for(const [key,type] of Object.entries(carFieldSets))for(const [field,,kind] of type){
+  if(['plate','model','dept','initialOdo','initialFuel'].includes(field))continue;
+  extras[field]=String(carCardDraft[field]??'').trim();
+ }
+ c.card=extras;
+ persist();
+ carCardDraft={...c,...c.card};$('carCardTitle').textContent=c.plate+' · '+c.model;
+ $('carCardStatus').textContent='Карточка сохранена на этом устройстве.';
+ openCarTab(carCardTab);
 }
 
 function closeMainMenus(){document.querySelectorAll('.main-nav .nav-dropdown[open]').forEach(d=>d.open=false)}
@@ -181,7 +244,7 @@ function chooseMainMenu(action){
  if(action==='update'){tab('appSettings');updateAlloGarage();return}
 }
 function openDirectories(){tab('settings');openDirectory('menu');}
-function openDirectory(name){var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});var back=document.getElementById('directoryBack');back.style.display=name==='menu'?'none':'inline-block';var title=document.getElementById('directoryTitle');title.textContent=({cars:'Автомобили',drivers:'Водители',departments:'Подразделения',assignments:'Закрепление водителей',norms:'Нормы ГСМ'})[name]||'Справочники';renderDirectoryTables();document.getElementById('settings').scrollIntoView({block:'start'});}
+function openDirectory(name){if(name!=='cars')closeCarCard();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});var back=document.getElementById('directoryBack');back.style.display=name==='menu'?'none':'inline-block';var title=document.getElementById('directoryTitle');title.textContent=({cars:'Автомобили',drivers:'Водители',departments:'Подразделения',assignments:'Закрепление водителей',norms:'Нормы ГСМ'})[name]||'Справочники';renderDirectoryTables();document.getElementById('settings').scrollIntoView({block:'start'});}
 function tab(name){if(name==='driver'){showDriverJournal();return;}['driver','driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents'].forEach(x=>$(x).classList.toggle('hidden',x!==name));if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);refresh();window.scrollTo(0,0)}function assignCarToDriver(){const d=db.drivers.find(x=>x.id===$('assignDriver').value),carId=$('assignCar').value;if(!d||!db.cars.some(c=>c.id===carId))return alert('Выберите водителя и автомобиль');d.carIds??=[];if(!d.carIds.includes(carId))d.carIds.push(carId);if(!d.defaultCarId)d.defaultCarId=carId;persist()}
 function removeAssignment(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d)return;d.carIds=(d.carIds||[]).filter(id=>id!==carId);if(d.defaultCarId===carId)d.defaultCarId=d.carIds[0]||null;persist()}
 function makeDefault(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d||!(d.carIds||[]).includes(carId))return;d.defaultCarId=carId;persist()}
