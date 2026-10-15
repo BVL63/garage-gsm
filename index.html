@@ -10,7 +10,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
 #driverJournal .driver-table{border-collapse:separate;border-spacing:0;width:100%}
 #driverJournal .driver-table thead th{position:sticky;top:0;z-index:2;background:#edf3fa;box-shadow:0 1px 0 #cbd3de}
 #driverJournal>.muted{flex-shrink:0;margin-bottom:0}
- .car-documents{display:block}.car-document-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 10px;background:#fff;border:1px solid #d1dce7;border-radius:9px;margin:8px 0}.car-document-row strong{display:block;font-size:14px}.car-document-row small{display:block;margin-top:6px;font-size:12px;overflow-wrap:anywhere}.car-document-row button{flex-shrink:0;margin:0;font-size:13px}.car-doc-extra{display:grid;gap:10px;margin-top:12px}.car-doc-extra label{font-weight:600;font-size:13px}.car-doc-extra textarea{width:100%;box-sizing:border-box;border:1px solid #cbd3de;border-radius:9px;padding:10px;font:inherit}.car-document-editor{padding:8px 0}.car-document-editor h4{font-size:16px;margin:0 0 16px}.car-doc-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;max-width:520px}.car-doc-form .car-field{display:grid;grid-template-columns:130px minmax(0,1fr);align-items:center;gap:10px}.car-doc-form .car-field>span{text-align:left}.car-doc-actions{display:flex;gap:10px;margin:18px 0 10px}.car-doc-actions button{margin:0}@media(max-width:420px){.car-doc-form .car-field{grid-template-columns:105px minmax(0,1fr);gap:8px}}.car-document-editor .car-card-header{margin-bottom:16px}.car-document-editor .car-card-header h4{margin:0}.car-document-editor>.car-card-fields{margin-bottom:14px}.car-card{margin:16px 0;border:1px solid #c8d6e5;background:#f4f8fc;border-radius:12px;padding:14px}.car-card-header{display:flex;align-items:center;justify-content:space-between;gap:10px}.car-card-header h3{margin:0}.car-card-header button{font-size:24px;min-width:42px}.car-tabs{display:flex;overflow-x:auto;gap:4px;margin:12px 0;border-bottom:1px solid #c5d5e4}.car-tabs button{flex:0 0 auto;background:#e3eaf2;color:#263c52;padding:10px 11px;border-radius:8px 8px 0 0;margin:0;font-size:13px}.car-tabs button.active{background:#1766a4;color:#fff}.car-card-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 16px}.car-field{display:grid;gap:4px;margin:0;min-width:0}.car-field span{font-size:13px}.car-field textarea{width:100%;box-sizing:border-box;border:1px solid #cbd3de;border-radius:8px;padding:10px;font:inherit}.car-field input[readonly]{background:#e9eff5}.car-card-actions{display:flex;flex-wrap:wrap;gap:6px}.car-card-actions button{margin:0}.directory-data tbody tr[role=button]{cursor:pointer}.directory-data tbody tr[role=button]:focus-visible{outline:2px solid #1766a4} .update-notice{position:fixed;z-index:1500;top:calc(8px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:560px;margin:0 auto;padding:14px 16px;border-radius:10px;background:#e4f1ff;color:#133d65;box-shadow:0 6px 22px #152b4233;border:1px solid #c0d7eb;font-size:14px;line-height:1.4;cursor:pointer}.update-notice.update-error{background:#fff2e5;color:#713700;border-color:#e6c9a7} .car-doc-table-wrap{max-width:100%;overflow:auto;overscroll-behavior-x:contain;border:1px solid #cbd8e6;border-radius:9px;background:white}.car-doc-table{width:100%;min-width:800px;border-collapse:separate;border-spacing:0;font-size:13px}.car-doc-table th,.car-doc-table td{padding:12px 10px;border-bottom:1px solid #e1e8ef;border-right:1px solid #eef2f5;text-align:left;vertical-align:middle;white-space:nowrap}.car-doc-table thead th{background:#e5eff8;font-weight:700}.car-doc-table tbody tr:last-child th,.car-doc-table tbody tr:last-child td{border-bottom:0}.car-doc-table tbody th{position:sticky;left:0;z-index:1;background:#fff;box-shadow:2px 0 3px #0000000b}.car-doc-table thead th:first-child{position:sticky;left:0;z-index:3}.car-doc-table td:last-child button{margin:0;padding:7px 10px;font-size:13px} #directoryMessage:empty{display:none} </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
+ .car-documents{display:block}.car-document-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 10px;background:#fff;border:1px solid #d1dce7;border-radius:9px;margin:8px 0}.car-document-row strong{display:block;font-size:14px}.car-document-row small{display:block;margin-top:6px;font-size:12px;overflow-wrap:anywhere}.car-document-row button{flex-shrink:0;margin:0;font-size:13px}.car-doc-extra{display:grid;gap:10px;margin-top:12px}.car-doc-extra label{font-weight:600;font-size:13px}.car-doc-extra textarea{width:100%;box-sizing:border-box;border:1px solid #cbd3de;border-radius:9px;padding:10px;font:inherit}.car-document-editor{padding:8px 0}.car-document-editor h4{font-size:16px;margin:0 0 16px}.car-doc-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;max-width:520px}.car-doc-form .car-field{display:grid;grid-template-columns:130px minmax(0,1fr);align-items:center;gap:10px}.car-doc-form .car-field>span{text-align:left}.car-doc-actions{display:flex;gap:10px;margin:18px 0 10px}.car-doc-actions button{margin:0}@media(max-width:420px){.car-doc-form .car-field{grid-template-columns:105px minmax(0,1fr);gap:8px}}.car-document-editor .car-card-header{margin-bottom:16px}.car-document-editor .car-card-header h4{margin:0}.car-document-editor>.car-card-fields{margin-bottom:14px}.car-card{margin:16px 0;border:1px solid #c8d6e5;background:#f4f8fc;border-radius:12px;padding:14px}.car-card-header{display:flex;align-items:center;justify-content:space-between;gap:10px}.car-card-header h3{margin:0}.car-card-header button{font-size:24px;min-width:42px}.car-tabs{display:flex;overflow-x:auto;gap:4px;margin:12px 0;border-bottom:1px solid #c5d5e4}.car-tabs button{flex:0 0 auto;background:#e3eaf2;color:#263c52;padding:10px 11px;border-radius:8px 8px 0 0;margin:0;font-size:13px}.car-tabs button.active{background:#1766a4;color:#fff}.car-card-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 16px}.car-field{display:grid;gap:4px;margin:0;min-width:0}.car-field span{font-size:13px}.car-field textarea{width:100%;box-sizing:border-box;border:1px solid #cbd3de;border-radius:8px;padding:10px;font:inherit}.car-field input[readonly]{background:#e9eff5}.car-card-actions{display:flex;flex-wrap:wrap;gap:6px}.car-card-actions button{margin:0}.directory-data tbody tr[role=button]{cursor:pointer}.directory-data tbody tr[role=button]:focus-visible{outline:2px solid #1766a4} .update-notice{position:fixed;z-index:1500;top:calc(8px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:560px;margin:0 auto;padding:14px 16px;border-radius:10px;background:#e4f1ff;color:#133d65;box-shadow:0 6px 22px #152b4233;border:1px solid #c0d7eb;font-size:14px;line-height:1.4;cursor:pointer}.update-notice.update-error{background:#fff2e5;color:#713700;border-color:#e6c9a7} .car-doc-table-wrap{max-width:100%;overflow:auto;overscroll-behavior-x:contain;border:1px solid #cbd8e6;border-radius:9px;background:white}.car-doc-table{width:100%;min-width:800px;border-collapse:separate;border-spacing:0;font-size:13px}.car-doc-table th,.car-doc-table td{padding:12px 10px;border-bottom:1px solid #e1e8ef;border-right:1px solid #eef2f5;text-align:left;vertical-align:middle;white-space:nowrap}.car-doc-table thead th{background:#e5eff8;font-weight:700}.car-doc-table tbody tr:last-child th,.car-doc-table tbody tr:last-child td{border-bottom:0}.car-doc-table tbody th{position:sticky;left:0;z-index:1;background:#fff;box-shadow:2px 0 3px #0000000b}.car-doc-table thead th:first-child{position:sticky;left:0;z-index:3}.car-doc-table td:last-child button{margin:0;padding:7px 10px;font-size:13px} #directoryMessage:empty{display:none} .car-ocr{border-top:1px solid #d2deeb;padding-top:12px;margin-top:16px}.car-ocr h4{margin:8px 0}.car-ocr-img{max-width:100%;max-height:250px;object-fit:contain;border:1px solid #cbd5e1;border-radius:8px;background:white}.car-ocr-suggestion{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #e0e7ef;overflow-wrap:anywhere}.car-ocr-suggestion button{flex-shrink:0;font-size:13px}.car-ocr-text{font:12px/1.4 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;padding:10px;background:#fff;border:1px solid #ddd;border-radius:8px}.car-ocr input[type=file]{padding:9px;font-size:13px} </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown" ontoggle="syncMainMenus(this)"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
   <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button>
@@ -73,10 +73,10 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
     <div id="assignments"></div>
 </div></details></div><div id="dir-cars" class="directory-screen"><div class="directory-table-head"><h3>Автомобили</h3><span id="directoryTotal-cars" class="muted"></span></div><p class="muted">Нажмите на автомобиль в таблице, чтобы открыть его карточку.</p><div class="scroll"><table class="directory-data"><thead id="directoryHead-cars"></thead><tbody id="directoryRows-cars"></tbody></table></div><section id="carCard" class="car-card hidden" aria-label="Карточка автомобиля"><div class="car-card-header"><h3 id="carCardTitle">Карточка автомобиля</h3><button class="secondary" type="button" onclick="closeCarCard()" aria-label="Закрыть карточку">×</button></div><div class="car-tabs" role="tablist" aria-label="Разделы автомобиля"><button class="active" type="button" onclick="openCarTab('main')" data-car-tab="main">Основная</button><button type="button" onclick="openCarTab('owner')" data-car-tab="owner">Собственник</button><button type="button" onclick="openCarTab('docs')" data-car-tab="docs">Документы</button><button type="button" onclick="openCarTab('specs')" data-car-tab="specs">Характеристики</button></div><div id="carCardFields" class="car-card-fields"></div><p id="carCardStatus" class="muted" role="status"></p><div class="car-card-actions"><button type="button" onclick="saveCarCard()">Сохранить</button><button type="button" class="secondary" onclick="closeCarCard()">Закрыть</button></div></section><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Добавить автомобиль</h2><div class="grid"><div><label>Госномер</label><input id="newPlate"></div><div><label>Модель</label><input id="newModel"></div><div><label>Исходный одометр, км</label><input id="newOdo" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Исходный остаток, л</label><input id="newBalance" type="number" min="0" step="0.0001" inputmode="decimal"></div><div><label>Подразделение</label><select id="newCarDept"></select></div><div><label>Летняя норма, л/100 км</label><input id="newSummer" type="number" min="0" step="0.001"></div><div><label>Зимняя норма, л/100 км</label><input id="newWinter" type="number" min="0" step="0.001"></div><div><label>Дата начала норм</label><input id="newFrom" type="date"></div><div><label>Основание (приказ)</label><input id="newOrder"></div></div><button onclick="addCar()">Добавить автомобиль</button></div></details></div><div id="dir-norms" class="directory-screen"><div class="directory-table-head"><h3>Нормы ГСМ</h3><span id="directoryTotal-norms" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-norms"></thead><tbody id="directoryRows-norms"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Изменить нормы (с историей)</h2><div class="grid"><div><label>Автомобиль</label><select id="normCar"></select></div><div><label>Действуют с</label><input type="date" id="normFrom"></div><div><label>Лето, л/100 км</label><input type="number" min="0" step="0.001" id="normSummer"></div><div><label>Зима, л/100 км</label><input type="number" min="0" step="0.001" id="normWinter"></div><div><label>Номер приказа</label><input id="normOrder"></div></div><button onclick="addNorm()">Добавить версию нормы</button><div id="normHistory" class="scroll"></div><hr><h2>Общий зимний период</h2><div class="grid"><div><label>Начало (ММ-ДД)</label><input id="winterStart" placeholder="11-01"></div><div><label>Конец (ММ-ДД)</label><input id="winterEnd" placeholder="03-31"></div></div><button onclick="saveSeasons()">Сохранить период</button><p class="muted">Даты зимнего периода могут переходить через Новый год. Изменение настроек влияет на незакрытые расчёты; для эксплуатации потребуется версионирование календаря сезонов и закрытие месяцев.</p></div></details></div></section><section id="appSettings" class="panel hidden"><h2>⚙ Настройки</h2><p class="muted">Резервное копирование данных этого телефона. Это не синхронизация с другими телефонами.</p>  <div class="backup-tools"><strong>Мои данные на этом телефоне</strong><div><button type="button" onclick="exportLocalBackup()">Сохранить копию</button><button type="button" class="secondary" onclick="document.getElementById('restoreBackupFile').click()">Восстановить из файла</button><input id="restoreBackupFile" type="file" accept=".json,application/json" hidden onchange="restoreLocalBackup(event)"></div><small>Сохраните копию до добавления приложения на главный экран или смены телефона. Копия содержит все локальные журналы и справочники (без фотографий).</small></div>
 <div class="backup-tools"><strong>Версия приложения</strong><div><button type="button" onclick="updateAlloGarage()" id="updateAppButton">↻ Обновить</button></div><small id="updateAppStatus" role="status">Проверить и загрузить последнюю версию сайта. Журналы на телефоне сохраняются.</small></div>
-<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.26 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
+<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.27 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
 const KEY='garage_gsm_proto_v1';
 
-const APP_VERSION='0.6.26';
+const APP_VERSION='0.6.27';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -198,6 +198,7 @@ function renderDirectoryTables(){
 
 // Vehicle card: extra fields are optional and never overwrite mileage/fuel history.
 let carCardId=null,carCardTab='main',carCardDraft=null,carDocGroup=null,carDocEdit=null;
+let ocrPreviewUrl=null,ocrWorker=null,ocrBusy=false,ocrProposals={};
 const carFieldSets={
  main:[['plate','Регистрационный знак'],['make','Марка'],['model','Модель'],['vehicleType','Тип транспортного средства'],['category','Категория ТС'],['year','Год выпуска','number'],['dept','Подразделение','department'],['initialOdo','Исходный одометр, км','readonly'],['initialFuel','Исходный остаток топлива, л','readonly']],
  owner:[['ownerName','Наименование собственника'],['ownerAddress','Адрес собственника'],['ownerInn','ИНН'],['ownerPhone','Телефон'],['ownerNotes','Примечание','textarea']],
@@ -213,7 +214,7 @@ function openCarCard(id){
  const card=$('carCard');card.classList.remove('hidden');$('carCardStatus').textContent='';
  openCarTab('main');card.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
-function closeCarCard(){carCardId=null;carCardDraft=null;carDocGroup=null;carDocEdit=null;$('carCard').classList.add('hidden')}
+function closeCarCard(){resetCarOcr();carCardId=null;carCardDraft=null;carDocGroup=null;carDocEdit=null;$('carCard').classList.add('hidden')}
 function collectCarTab(){
  if(!carCardDraft)return;
  if(carCardTab==='docs'&&carDocGroup){return}
@@ -224,6 +225,8 @@ function collectCarTab(){
 }
 function openCarTab(name){
  if(!carCardDraft||!carFieldSets[name])return;
+ if(ocrBusy)return alert('Дождитесь завершения распознавания.');
+ resetCarOcr();
  collectCarTab();carCardTab=name;carDocGroup=null;
  $('carCardFields').classList.toggle('car-documents',name==='docs');
  document.querySelectorAll('[data-car-tab]').forEach(b=>{const on=b.dataset.carTab===name;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
@@ -260,6 +263,7 @@ function renderCarDocumentGroups(){
  +'</tbody></table></div><p class="muted">На телефоне таблицу можно прокручивать влево и вправо. Нажмите «Изменить», чтобы открыть реквизиты документа.</p><div class="car-doc-extra"><label>Техосмотр действует до<input id="carField_inspectionUntil" type="date" value="'+esc(carCardDraft.inspectionUntil||'')+'"></label><label>Примечание<textarea id="carField_docsNotes" rows="2">'+esc(carCardDraft.docsNotes||'')+'</textarea></label></div>';
 }
 function openCarDocument(id){
+ resetCarOcr();
  if(!carCardDraft||!carDocumentGroups[id])return;
  if(carDocGroup)cancelCarDocument();
  for(const field of ['inspectionUntil','docsNotes']){
@@ -274,9 +278,11 @@ function openCarDocument(id){
   const meta=types[field],value=carDocEdit[field];
   const control=meta.type==='textarea'?'<textarea id="carDoc_'+field+'" rows="2">'+esc(value)+'</textarea>':'<input id="carDoc_'+field+'" type="'+(meta.type==='date'?'date':'text')+'" value="'+esc(value)+'">';
   return '<label class="car-field"><span>'+esc(meta.label)+'</span>'+control+'</label>';
- }).join('')+'</div><div class="car-doc-actions"><button type="button" onclick="acceptCarDocument()">ОК</button><button class="secondary" type="button" onclick="cancelCarDocument()">Отмена</button></div><p class="muted">«ОК» применяет изменения к карточке. Чтобы сохранить их на телефоне, нажмите «Сохранить» в карточке автомобиля.</p></div>';
+ }).join('')+'</div><section class="car-ocr"><h4>Распознавание скана</h4><p class="muted">JPG или PNG, до 8 МБ. Обработка в браузере; реквизиты не меняются без проверки.</p><input type="file" id="carOcrFile" accept="image/jpeg,image/png" onchange="loadCarOcrFile(event)"><div id="carOcrPreview" class="hidden"></div><div class="car-doc-actions"><button type="button" id="carOcrStart" onclick="runCarOcr()" disabled>Распознать текст</button><button type="button" class="secondary" onclick="clearCarOcrFile()">Очистить скан</button></div><p id="carOcrStatus" class="muted" role="status">Выберите изображение.</p><div id="carOcrReview"></div></section><div class="car-doc-actions"><button type="button" onclick="acceptCarDocument()">ОК</button><button class="secondary" type="button" onclick="cancelCarDocument()">Отмена</button></div><p class="muted">«ОК» применяет изменения к карточке. Чтобы сохранить их на телефоне, нажмите «Сохранить» в карточке автомобиля.</p></div>';
 }
 function acceptCarDocument(){
+ if(ocrBusy)return alert('Дождитесь завершения распознавания.');
+ resetCarOcr();
  if(!carDocGroup||!carDocEdit)return;
  for(const field of carDocumentGroups[carDocGroup].fields){
   const input=$('carDoc_'+field);if(input)carCardDraft[field]=input.value.trim();
@@ -285,10 +291,139 @@ function acceptCarDocument(){
  renderCarDocumentGroups();
 }
 function cancelCarDocument(){
+ if(ocrBusy)return alert('Дождитесь завершения распознавания.');
+ resetCarOcr();
  carDocGroup=null;carDocEdit=null;
  if(carCardTab==='docs')renderCarDocumentGroups();
 }
 function closeCarDocument(){acceptCarDocument()}
+
+function resetCarOcr(){
+ if(ocrPreviewUrl){URL.revokeObjectURL(ocrPreviewUrl);ocrPreviewUrl=null}
+ ocrProposals={};
+}
+function clearCarOcrFile(){
+ if(ocrBusy)return;
+ resetCarOcr();
+ const file=$('carOcrFile');if(file)file.value='';
+ const preview=$('carOcrPreview');if(preview){preview.classList.add('hidden');preview.innerHTML=''}
+ const review=$('carOcrReview');if(review)review.innerHTML='';
+ const button=$('carOcrStart');if(button)button.disabled=true;
+ const status=$('carOcrStatus');if(status)status.textContent='Изображение очищено.';
+}
+function loadCarOcrFile(event){
+ if(ocrBusy)return;
+ resetCarOcr();
+ const file=event.target.files?.[0];
+ if(!file)return clearCarOcrFile();
+ if(!['image/jpeg','image/png'].includes(file.type)||file.size>8*1024*1024){
+  alert('Выберите JPG или PNG размером до 8 МБ.');return clearCarOcrFile();
+ }
+ ocrPreviewUrl=URL.createObjectURL(file);
+ $('carOcrPreview').innerHTML='<img src="'+esc(ocrPreviewUrl)+'" alt="Загруженный скан для проверки" class="car-ocr-img">';
+ $('carOcrPreview').classList.remove('hidden');
+ $('carOcrStart').disabled=false;
+ $('carOcrStatus').textContent='Изображение выбрано. Нажмите «Распознать текст».';
+ $('carOcrReview').innerHTML='';
+}
+function loadCarOcrLibrary(){
+ if(window.Tesseract?.createWorker)return Promise.resolve();
+ if(window.carOcrLibPromise)return window.carOcrLibPromise;
+ window.carOcrLibPromise=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+  script.onload=()=>window.Tesseract?.createWorker?resolve():reject(Error('Модуль OCR не загрузился.'));
+  script.onerror=()=>reject(Error('Не удалось загрузить модуль OCR. Нужен интернет.'));
+  document.head.appendChild(script);
+ }).catch(e=>{window.carOcrLibPromise=null;throw e});
+ return window.carOcrLibPromise;
+}
+function ocrExtractSuggestions(text,kind){
+ // Conservative first pass: suggest only items following clear printed labels.
+ const lines=String(text||'').split(/\r?\n/).map(x=>x.trim().replace(/\s+/g,' ')).filter(Boolean);
+ const result={};
+ const findValue=(patterns,max=100)=>{
+  for(let i=0;i<lines.length;i++){
+   for(const re of patterns){
+    const m=lines[i].match(re);
+    if(m){
+     const found=String(m[1]||'').replace(/^[\s.:№#-]+/,'').trim();
+     if(found&&found.length<=max)return found;
+     if(!found&&i+1<lines.length&&lines[i+1].length<=max)return lines[i+1];
+    }
+   }
+  }
+  return '';
+ };
+ const dateString=findValue([/(?:дата\s*(?:выдачи|оформления)|выдан[ао]?\s*|от\s*)(?:[:№\s]*)(\d{2}[.\/-]\d{2}[.\/-]\d{4})/i],20);
+ const normalizedDate=()=>{
+  const match=dateString.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})$/);
+  if(!match)return '';
+  const iso=match[3]+'-'+match[2]+'-'+match[1];
+  const d=new Date(iso+'T12:00:00');
+  return d.getFullYear()===Number(match[3])&&d.getMonth()+1===Number(match[2])&&d.getDate()===Number(match[1])?iso:'';
+ };
+ const vin=findValue([/\bVIN\s*[:№#-]?\s*([A-HJ-NPR-Z0-9]{17})/i,/\bидентификационный\s+номер\s*[:№#-]?\s*([A-HJ-NPR-Z0-9]{17})/i],17).toUpperCase();
+ if(vin&&/^[A-HJ-NPR-Z0-9]{17}$/.test(vin))result.vin=vin;
+ const typeKey=kind==='pts'?'ptsType':kind==='osago'?'osagoType':null;
+ if(typeKey&&kind==='pts')result[typeKey]=/ЭЛЕКТРОНН|ЭПТС/i.test(text)?'ЭПТС':'ПТС';
+ const prefix=kind==='pts'?'pts':kind==='sts'?'sts':'osago';
+ const series=findValue([/(?:серия|сер\.)\s*[:№#-]?\s*([0-9А-ЯA-Z]{2,6}(?:\s*[А-ЯA-Z]{1,3})?)/i],15);
+ const number=findValue([/(?:номер\s+(?:полиса|документа)|№|номер)\s*[:№#-]?\s*([0-9]{6,16})/i],16);
+ const issuer=findValue([/(?:кем\s+выдан[о]?|выдан\s+(?:кем|органом)|орган\s+выдачи|страховщик)\s*[:№#-]?\s*(.+)$/i],110);
+ if(series)result[prefix+'Series']=series.toUpperCase();
+ if(number)result[prefix+'Number']=number;
+ if(normalizedDate())result[prefix+'Issued']=normalizedDate();
+ if(issuer)result[prefix+'Issuer']=issuer;
+ return result;
+}
+function showCarOcrReview(text){
+ const container=$('carOcrReview');if(!container)return;
+ const fields=Object.fromEntries(carFieldSets.docs.map(([field,label])=>[field,label]));
+ const rows=Object.entries(ocrProposals).filter(([field])=>carDocumentGroups[carDocGroup]?.fields.includes(field));
+ container.innerHTML='<h4>Проверка распознанных реквизитов</h4><p class="muted">Предложения могут содержать ошибки. Сравните со сканом и нажмите «Принять» для каждого проверенного поля.</p>'
+ +(rows.length?rows.map(([field,value])=>'<div class="car-ocr-suggestion"><div><strong>'+esc(fields[field]||field)+'</strong><div>'+esc(value)+'</div></div><button type="button" class="secondary" onclick="acceptCarOcrField(\''+field+'\')">Принять</button></div>').join(''):'<p class="muted">Надёжные совпадения не обнаружены. Заполните поля вручную по тексту ниже.</p>')
+ +'<details><summary>Весь распознанный текст</summary><pre class="car-ocr-text">'+esc(text.slice(0,20000))+'</pre></details>';
+}
+function acceptCarOcrField(field){
+ if(!Object.prototype.hasOwnProperty.call(ocrProposals,field))return;
+ const input=$('carDoc_'+field);if(!input)return;
+ input.value=ocrProposals[field];input.dispatchEvent(new Event('input',{bubbles:true}));
+ document.querySelectorAll('.car-ocr-suggestion').forEach(row=>{
+  if(row.querySelector('button')?.getAttribute('onclick')==="acceptCarOcrField('"+field+"')"){
+   row.querySelector('button').textContent='Принято';
+   row.querySelector('button').disabled=true;
+  }
+ });
+}
+async function runCarOcr(){
+ const file=$('carOcrFile')?.files?.[0];
+ const kind=carDocGroup;
+ if(ocrBusy||!file||!kind)return;
+ const status=$('carOcrStatus'),button=$('carOcrStart');
+ ocrBusy=true;button.disabled=true;$('carOcrReview').innerHTML='';
+ try{
+  if(!navigator.onLine&&!window.Tesseract)throw Error('При первом запуске нужен интернет для загрузки OCR и языковых моделей.');
+  status.textContent='Загружаем модуль распознавания…';
+  await loadCarOcrLibrary();
+  status.textContent='Загружаем русскую и английскую модели…';
+  const worker=await window.Tesseract.createWorker('rus+eng',1,{logger:m=>{
+   if(m.status==='recognizing text')status.textContent='Распознаём: '+Math.round((m.progress||0)*100)+'%';
+  }});
+  try{
+   status.textContent='Распознаём текст документа…';
+   const result=await worker.recognize(file);
+   const raw=result?.data?.text||'';
+   if(!raw.trim())throw Error('Не удалось прочитать текст. Попробуйте фотографию при лучшем освещении.');
+   ocrProposals=ocrExtractSuggestions(raw,kind);
+   showCarOcrReview(raw);
+   status.textContent='Готово. Сверьте результат с исходным изображением.';
+  }finally{await worker.terminate()}
+ }catch(error){
+  status.textContent='Ошибка OCR: '+(error?.message||String(error));
+ }finally{ocrBusy=false;if(button)button.disabled=false}
+}
+
 function saveCarCard(){
  if(!carCardDraft||!carCardId)return;
  collectCarTab();
