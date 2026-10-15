@@ -80,7 +80,42 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
  .sheet-row{grid-template-columns:230px 320px}
  .sheet-row input,.sheet-row select{width:320px}
 }
-.catalog-child{margin:16px 0 20px;padding:14px;border:1px solid #bfd2e2;border-radius:11px;background:#f2f7fb}.catalog-child.hidden{display:none}.catalog-child .directory-table-head{gap:10px}.catalog-child .directory-table-head h4{margin:8px 0;font-size:16px}.catalog-child .directory-table-head button{margin:0}.catalog-child .catalog-editor{background:#fff}.catalog-child .scroll{max-height:320px;overflow:auto}.catalog-makes-table td input{min-width:145px}.catalog-makes-table td:last-child{white-space:nowrap}.catalog-makes-table td:last-child button{font-size:13px;padding:8px 10px} .catalog-makes-table tbody tr[role=button]{cursor:pointer}.catalog-makes-table tbody tr.make-selected td{background:#dceeff;box-shadow:inset 0 0 0 1px #bfd9ee}.make-bottom-actions{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 4px}.make-bottom-actions button{font-size:13px;margin:0;padding:9px 11px}@media(min-width:900px){.make-bottom-actions{justify-content:flex-start}} </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
+.catalog-child{margin:16px 0 20px;padding:14px;border:1px solid #bfd2e2;border-radius:11px;background:#f2f7fb}.catalog-child.hidden{display:none}.catalog-child .directory-table-head{gap:10px}.catalog-child .directory-table-head h4{margin:8px 0;font-size:16px}.catalog-child .directory-table-head button{margin:0}.catalog-child .catalog-editor{background:#fff}.catalog-child .scroll{max-height:320px;overflow:auto}.catalog-makes-table td input{min-width:145px}.catalog-makes-table td:last-child{white-space:nowrap}.catalog-makes-table td:last-child button{font-size:13px;padding:8px 10px} .catalog-makes-table tbody tr[role=button]{cursor:pointer}.catalog-makes-table tbody tr.make-selected td{background:#dceeff;box-shadow:inset 0 0 0 1px #bfd9ee}.make-bottom-actions{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 4px}.make-bottom-actions button{font-size:13px;margin:0;padding:9px 11px}@media(min-width:900px){.make-bottom-actions{justify-content:flex-start}} 
+/* Common registry framework, used by all directory screens. */
+.directory-screen{--registry-line:#d4e1ed;--registry-head:#e9f1f8;--registry-select:#e1f0ff}
+.directory-screen.active{display:flex;flex-direction:column;gap:10px;min-width:0}
+.directory-screen .directory-table-head{min-height:43px;gap:14px;border-bottom:1px solid var(--registry-line);padding-bottom:9px}
+.directory-screen .directory-table-head h3{font-size:18px;font-weight:700;margin:0;min-width:0}
+.directory-screen .directory-table-head .muted{margin-left:auto;white-space:nowrap}
+.directory-screen .registry-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:3px 0 6px}
+.directory-screen .registry-toolbar input[type=search]{width:min(100%,360px);min-width:180px;flex:1 1 200px;min-height:40px}
+.directory-screen .registry-toolbar button{margin:0;padding:9px 12px;font-size:13px;min-height:40px}
+.directory-screen .registry-toolbar .registry-close{margin-left:auto}
+.directory-screen>.scroll{border:1px solid var(--registry-line);border-radius:8px;max-height:52dvh;overflow:auto;background:#fff}
+.directory-screen .directory-data{border-collapse:separate;border-spacing:0}
+.directory-screen .directory-data thead th{background:var(--registry-head);border-bottom:2px solid #bfd0df;position:sticky;top:0;z-index:2;font-weight:700}
+.directory-screen .directory-data tbody tr:nth-child(even) td{background:#f8fbfe}
+.directory-screen .directory-data tbody tr:hover td{background:#edf6ff}
+.directory-screen .directory-data tbody tr.make-selected td{background:var(--registry-select)}
+.directory-screen>.directory-edit{margin-top:4px;background:#fbfdff}
+.directory-screen>.directory-edit summary{padding:5px;font-size:14px}
+.directory-screen>.muted{margin:2px 0}
+.directory-screen .registry-no-results{padding:12px;color:#637083}
+@media(max-width:899px){
+ .directory-screen .directory-table-head h3{font-size:16px}
+ .directory-screen .registry-toolbar{gap:6px}
+ .directory-screen .registry-toolbar input[type=search]{flex-basis:100%;width:100%}
+ .directory-screen .registry-toolbar button{flex:1 1 auto}
+ .directory-screen .registry-toolbar .registry-close{margin-left:0}
+ .directory-screen>.scroll{max-height:50dvh}
+ .directory-screen .directory-data th,.directory-screen .directory-data td{padding:9px 8px}
+}
+@media(min-width:900px){
+ .directory-screen>.scroll{max-height:58dvh}
+ .directory-screen .registry-toolbar input[type=search]{flex:0 1 390px}
+ .directory-screen .directory-table-head h3{font-size:20px}
+}
+</style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown" ontoggle="syncMainMenus(this)"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
   <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button>
@@ -160,7 +195,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
  <div id="enginesReturnBar" class="hidden"><button type="button" class="secondary" onclick="openDirectory(\'makes\')">← К производителям</button></div><div class="catalog-editor"><h4 id="catalogTitle-engines">Добавить двигатель</h4><input type="hidden" id="catalogId-engines"><div class="grid"><label>Производитель<select id="catalogEngineMake"></select></label><label>Модель двигателя<input id="catalogEngineName"></label><label>Тип двигателя<input id="catalogEngineType" placeholder="Бензиновый / дизельный"></label><label>Топливо<input id="catalogEngineFuel" placeholder="АИ-95 / ДТ"></label><label>Объём, см³<input id="catalogEngineVolume" type="number" min="0" step="1" inputmode="numeric"></label><label>Мощность, кВт<input id="catalogEngineKw" type="number" min="0" step="0.01" inputmode="decimal"></label><label>Мощность, л. с.<input id="catalogEngineHp" type="number" min="0" step="0.01" inputmode="decimal"></label></div><div class="car-doc-actions"><button type="button" onclick="saveCatalog('engines')">Сохранить</button><button type="button" class="secondary" onclick="clearCatalog('engines')">Очистить</button></div></div>
 </div><div id="dir-cars" class="directory-screen"><div class="directory-table-head"><h3>Автомобили</h3><span id="directoryTotal-cars" class="muted"></span></div><p class="muted">Нажмите на автомобиль в таблице, чтобы открыть его карточку.</p><div class="scroll"><table class="directory-data"><thead id="directoryHead-cars"></thead><tbody id="directoryRows-cars"></tbody></table></div><section id="carCard" class="car-card hidden" aria-label="Карточка автомобиля"><div class="car-card-header"><h3 id="carCardTitle">Карточка автомобиля</h3><button class="secondary" type="button" onclick="closeCarCard()" aria-label="Закрыть карточку">×</button></div><div class="car-tabs" role="tablist" aria-label="Разделы автомобиля"><button class="active" type="button" onclick="openCarTab('main')" data-car-tab="main">Основная</button><button type="button" onclick="openCarTab('owner')" data-car-tab="owner">Собственник</button><button type="button" onclick="openCarTab('docs')" data-car-tab="docs">Документы</button><button type="button" onclick="openCarTab('specs')" data-car-tab="specs">Характеристики</button></div><div id="carCardFields" class="car-card-fields"></div><p id="carCardStatus" class="muted" role="status"></p><div class="car-card-actions"><button type="button" onclick="saveCarCard()">Сохранить</button><button type="button" class="secondary" onclick="closeCarCard()">Закрыть</button></div></section><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Новый автомобиль</h2><p class="muted">Для создания достаточно госномера. Документы можно заполнить сразу, а одометр, топливо и нормы — позже, перед первой путёвкой.</p><div class="grid"><div><label>Госномер</label><input id="newPlate"></div><div><label>Модель</label><input id="newModel"></div><div><label>Исходный одометр, км</label><input id="newOdo" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Исходный остаток, л</label><input id="newBalance" type="number" min="0" step="0.0001" inputmode="decimal"></div><div><label>Подразделение</label><select id="newCarDept"></select></div><div><label>Летняя норма, л/100 км</label><input id="newSummer" type="number" min="0" step="0.001"></div><div><label>Зимняя норма, л/100 км</label><input id="newWinter" type="number" min="0" step="0.001"></div><div><label>Дата начала норм</label><input id="newFrom" type="date"></div><div><label>Основание (приказ)</label><input id="newOrder"></div></div><button onclick="addCar()">Создать и открыть документы →</button></div></details></div><div id="dir-norms" class="directory-screen"><div class="directory-table-head"><h3>Нормы ГСМ</h3><span id="directoryTotal-norms" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-norms"></thead><tbody id="directoryRows-norms"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Изменить нормы (с историей)</h2><div class="grid"><div><label>Автомобиль</label><select id="normCar"></select></div><div><label>Действуют с</label><input type="date" id="normFrom"></div><div><label>Лето, л/100 км</label><input type="number" min="0" step="0.001" id="normSummer"></div><div><label>Зима, л/100 км</label><input type="number" min="0" step="0.001" id="normWinter"></div><div><label>Номер приказа</label><input id="normOrder"></div></div><button onclick="addNorm()">Добавить версию нормы</button><div id="normHistory" class="scroll"></div><hr><h2>Общий зимний период</h2><div class="grid"><div><label>Начало (ММ-ДД)</label><input id="winterStart" placeholder="11-01"></div><div><label>Конец (ММ-ДД)</label><input id="winterEnd" placeholder="03-31"></div></div><button onclick="saveSeasons()">Сохранить период</button><p class="muted">Даты зимнего периода могут переходить через Новый год. Изменение настроек влияет на незакрытые расчёты; для эксплуатации потребуется версионирование календаря сезонов и закрытие месяцев.</p></div></details></div></section><section id="appSettings" class="panel hidden"><h2>⚙ Настройки</h2><p class="muted">Резервное копирование данных этого телефона. Это не синхронизация с другими телефонами.</p>  <div class="backup-tools"><strong>Мои данные на этом телефоне</strong><div><button type="button" onclick="exportLocalBackup()">Сохранить копию</button><button type="button" class="secondary" onclick="document.getElementById('restoreBackupFile').click()">Восстановить из файла</button><input id="restoreBackupFile" type="file" accept=".json,application/json" hidden onchange="restoreLocalBackup(event)"></div><small>Сохраните копию до добавления приложения на главный экран или смены телефона. Копия содержит все локальные журналы и справочники (без фотографий).</small></div>
 <div class="backup-tools"><strong>Версия приложения</strong><div><button type="button" onclick="updateAlloGarage()" id="updateAppButton">↻ Обновить</button></div><small id="updateAppStatus" role="status">Проверить и загрузить последнюю версию сайта. Журналы на телефоне сохраняются.</small></div>
-<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.39 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
+<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.40 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
 const KEY='garage_gsm_proto_v1';
 const desktopLayoutQuery=window.matchMedia('(min-width:900px)');
 function applyInterfaceMode(){
@@ -173,7 +208,7 @@ applyInterfaceMode();
 if(desktopLayoutQuery.addEventListener)desktopLayoutQuery.addEventListener('change',applyInterfaceMode);
 else if(desktopLayoutQuery.addListener)desktopLayoutQuery.addListener(applyInterfaceMode);
 
-const APP_VERSION='0.6.39';
+const APP_VERSION='0.6.40';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -273,7 +308,7 @@ window.addEventListener('load',()=>{
  updateOfflineFlag();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(err=>console.warn('Offline setup failed',err));
 });
-let db;const $=id=>document.getElementById(id);const today=()=>new Date().toLocaleDateString('en-CA');const uid=()=>((typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));const num=x=>Number(x||0);const fmtOdo=x=>x===null||x===undefined||x===''?'—':Number.isFinite(Number(x))?Math.trunc(Number(x)).toLocaleString('ru-RU').replace(/[\u00a0\u202f]/g,' '):String(x);const round=x=>Math.round((x+Number.EPSILON)*10000)/10000;function init(){try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db)db={departments:[{id:'d1',name:'Основное подразделение'}],drivers:[],cars:[],entries:[],winterStart:'11-01',winterEnd:'03-31'};db.entries??=[];db.cars??=[];db.drivers??=[];db.departments??=[];db.makes??=[];db.models??=[];db.engines??=[];$('date').value=today();$('year').value=new Date().getFullYear();$('newFrom').value=today();$('normFrom').value=today();$('monthFilter').value=today().slice(0,7);journalMonth=today().slice(0,7);removeEmptyImportedWeekends();refresh();showDriverJournal()};function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Браузер не разрешил сохранить данные. Откройте программу в Safari.');}refresh()}function options(id,items,placeholder){const s=$(id),old=s.value;s.innerHTML='<option value="">'+placeholder+'</option>'+items.map(i=>`<option value="${esc(i.id)}">${esc(i.name)}</option>`).join('');if(items.some(i=>i.id===old))s.value=old}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function refresh(){options('assignDriver',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('assignCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('vehicle',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('journalCar',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('excelCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('excelDriverAll',db.drivers.map(d=>({id:d.id,name:d.name})),'— Выберите водителя —');options('normCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('driverId',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('newCarDept',db.departments,'Выберите подразделение');options('deptFilter',db.departments,'Все подразделения');$('winterStart').value=db.winterStart;$('winterEnd').value=db.winterEnd;render();renderNorms();renderAssignments();renderDirectoryTables();renderCatalogs();preview();renderDriverJournal();}
+let db;const $=id=>document.getElementById(id);const today=()=>new Date().toLocaleDateString('en-CA');const uid=()=>((typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));const num=x=>Number(x||0);const fmtOdo=x=>x===null||x===undefined||x===''?'—':Number.isFinite(Number(x))?Math.trunc(Number(x)).toLocaleString('ru-RU').replace(/[\u00a0\u202f]/g,' '):String(x);const round=x=>Math.round((x+Number.EPSILON)*10000)/10000;function init(){prepareRegistryLayout();try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db)db={departments:[{id:'d1',name:'Основное подразделение'}],drivers:[],cars:[],entries:[],winterStart:'11-01',winterEnd:'03-31'};db.entries??=[];db.cars??=[];db.drivers??=[];db.departments??=[];db.makes??=[];db.models??=[];db.engines??=[];$('date').value=today();$('year').value=new Date().getFullYear();$('newFrom').value=today();$('normFrom').value=today();$('monthFilter').value=today().slice(0,7);journalMonth=today().slice(0,7);removeEmptyImportedWeekends();refresh();showDriverJournal()};function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Браузер не разрешил сохранить данные. Откройте программу в Safari.');}refresh()}function options(id,items,placeholder){const s=$(id),old=s.value;s.innerHTML='<option value="">'+placeholder+'</option>'+items.map(i=>`<option value="${esc(i.id)}">${esc(i.name)}</option>`).join('');if(items.some(i=>i.id===old))s.value=old}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function refresh(){options('assignDriver',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('assignCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('vehicle',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('journalCar',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('excelCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('excelDriverAll',db.drivers.map(d=>({id:d.id,name:d.name})),'— Выберите водителя —');options('normCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('driverId',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('newCarDept',db.departments,'Выберите подразделение');options('deptFilter',db.departments,'Все подразделения');$('winterStart').value=db.winterStart;$('winterEnd').value=db.winterEnd;render();renderNorms();renderAssignments();renderDirectoryTables();renderCatalogs();preview();renderDriverJournal();}
 
 function renderDirectoryTables(){
  const data={
@@ -289,6 +324,7 @@ function renderDirectoryTables(){
   head.innerHTML='<tr>'+def.columns.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr>';
   body.innerHTML=def.rows.map((row,i)=>'<tr'+(id==='cars'?' tabindex="0" role="button" title="Открыть карточку" onclick="openCarCardByIndex('+i+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openCarCardByIndex('+i+')}"':'')+'>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
   if(count)count.textContent='Записей: '+def.rows.length;
+  filterRegistryRows(id);
  }
 }
 
@@ -342,6 +378,7 @@ function renderCatalogs(){
  for(const [name,rows,cols] of [['makes',makeRows,3],['models',modelRows,3],['engines',engineRows,8]]){
   $('catalogRows-'+name).innerHTML=rows.join('')||'<tr><td colspan="'+cols+'">Записей пока нет</td></tr>';
   $('directoryTotal-'+name).textContent='Записей: '+(name==='makes'?db.makes.length:rows.length);
+  filterRegistryRows(name);
  }
  const selected=db.makes.find(m=>m.id===selectedMakeId);
  $('makeSelectionMessage').textContent=selected?'Выбран: '+selected.name+'. Повторное нажатие на строку открывает редактирование.':'Выберите производителя в таблице, затем «Модели автомобилей» или «Двигатели».';
@@ -831,7 +868,85 @@ function chooseMainMenu(action){
  if(action==='update'){updateAlloGarage();return}
 }
 function openDirectories(){tab('settings');openDirectory('menu');}
-function openDirectory(name,keepMakeFilter=false){if(!keepMakeFilter)relatedMakeFilter=null;if(name!=='cars')closeCarCard();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();document.getElementById('settings').scrollIntoView({block:'start'});}
+
+const registryNames={
+ cars:'Автомобили',makes:'Производители автомобилей',models:'Модели автомобилей',
+ engines:'Двигатели',drivers:'Водители',departments:'Подразделения',
+ assignments:'Закрепления',norms:'Нормы ГСМ'
+};
+let registryCurrent='cars';
+function prepareRegistryLayout(){
+ for(const name of Object.keys(registryNames)){
+  const panel=$('dir-'+name);if(!panel||panel.querySelector('.registry-toolbar'))continue;
+  const header=panel.querySelector('.directory-table-head');if(!header)continue;
+  const bar=document.createElement('div');bar.className='registry-toolbar';
+  bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','Действия справочника');
+  const input=document.createElement('input');
+  input.type='search';input.id='registrySearch-'+name;input.placeholder='Поиск в таблице…';
+  input.setAttribute('aria-label','Поиск: '+registryNames[name]);
+  input.addEventListener('input',()=>filterRegistryRows(name));
+  bar.appendChild(input);
+  const add=(caption,handler,klass)=>{
+   const button=document.createElement('button');button.type='button';
+   button.textContent=caption;if(klass)button.className=klass;
+   button.addEventListener('click',handler);bar.appendChild(button);
+  };
+  if(!['assignments','norms'].includes(name))add('＋ Добавить',()=>registryAdd(name));
+  if(name==='makes'){
+   add('Модели',()=>openRelatedCatalog('models'),'secondary');
+   add('Двигатели',()=>openRelatedCatalog('engines'),'secondary');
+  }
+  if(name==='assignments'||name==='norms')add('＋ Добавить',()=>registryAdd(name));
+  add('Закрыть',()=>openDirectory('menu'),'secondary registry-close');
+  header.after(bar);
+ }
+}
+function registryAdd(name){
+ const panel=$('dir-'+name);if(!panel)return;
+ if(name==='makes'){
+  editingMakeId=null;selectedMakeId=null;renderCatalogs();
+  const input=$('makeRowName');
+  if(input){input.scrollIntoView({block:'nearest'});input.focus();}
+  return;
+ }
+ if(name==='models'||name==='engines') {
+  clearCatalog(name);
+  if(relatedMakeFilter){
+   const select=$(name==='models'?'catalogModelMake':'catalogEngineMake');
+   if(select)select.value=relatedMakeFilter;
+  }
+ }
+ if(name==='cars')closeCarCard();
+ const editor=panel.querySelector('details.directory-edit');
+ if(editor){editor.open=true;editor.scrollIntoView({block:'nearest'});}
+ else {
+  const target=panel.querySelector('.catalog-editor');
+  if(target)target.scrollIntoView({block:'nearest'});
+ }
+ if(name==='drivers')$('newDriver')?.focus();
+ else if(name==='departments')$('newDept')?.focus();
+ else if(name==='cars')$('newPlate')?.focus();
+ else if(name==='models')$('catalogModelName')?.focus();
+ else if(name==='engines')$('catalogEngineName')?.focus();
+}
+function filterRegistryRows(name){
+ const panel=$('dir-'+name);if(!panel)return;
+ const search=$('registrySearch-'+name),table=panel.querySelector(':scope > .scroll table');
+ if(!search||!table)return;
+ const term=search.value.trim().toLocaleLowerCase('ru');
+ const rows=Array.from(table.tBodies[0]?.rows||[]);
+ let found=0;
+ for(const row of rows){
+  const fields=Array.from(row.cells).map(c=>c.querySelector('input')?.value||c.textContent||'').join(' ').toLocaleLowerCase('ru');
+  const match=!term||fields.includes(term);
+  row.hidden=!match;
+  if(match&&!(name==='makes'&&row.querySelector('#makeRowName')&&!editingMakeId))found++;
+ }
+ const msg=panel.querySelector(':scope > .registry-no-results');
+ if(msg)msg.hidden=found!==0||!term;
+}
+
+function openDirectory(name,keepMakeFilter=false){prepareRegistryLayout();registryCurrent=name;if(!keepMakeFilter)relatedMakeFilter=null;if(name!=='cars')closeCarCard();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();if(registryNames[name])filterRegistryRows(name);document.getElementById('settings').scrollIntoView({block:'start'});}
 function tab(name){if(name==='driver'){showDriverJournal();return;}['driver','driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents'].forEach(x=>$(x).classList.toggle('hidden',x!==name));if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);refresh();window.scrollTo(0,0)}function assignCarToDriver(){const d=db.drivers.find(x=>x.id===$('assignDriver').value),carId=$('assignCar').value;if(!d||!db.cars.some(c=>c.id===carId))return alert('Выберите водителя и автомобиль');d.carIds??=[];if(!d.carIds.includes(carId))d.carIds.push(carId);if(!d.defaultCarId)d.defaultCarId=carId;persist()}
 function removeAssignment(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d)return;d.carIds=(d.carIds||[]).filter(id=>id!==carId);if(d.defaultCarId===carId)d.defaultCarId=d.carIds[0]||null;persist()}
 function makeDefault(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d||!(d.carIds||[]).includes(carId))return;d.defaultCarId=carId;persist()}
