@@ -80,7 +80,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
  .sheet-row{grid-template-columns:230px 320px}
  .sheet-row input,.sheet-row select{width:320px}
 }
-.catalog-child{margin:16px 0 20px;padding:14px;border:1px solid #bfd2e2;border-radius:11px;background:#f2f7fb}.catalog-child.hidden{display:none}.catalog-child .directory-table-head{gap:10px}.catalog-child .directory-table-head h4{margin:8px 0;font-size:16px}.catalog-child .directory-table-head button{margin:0}.catalog-child .catalog-editor{background:#fff}.catalog-child .scroll{max-height:320px;overflow:auto}</style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
+.catalog-child{margin:16px 0 20px;padding:14px;border:1px solid #bfd2e2;border-radius:11px;background:#f2f7fb}.catalog-child.hidden{display:none}.catalog-child .directory-table-head{gap:10px}.catalog-child .directory-table-head h4{margin:8px 0;font-size:16px}.catalog-child .directory-table-head button{margin:0}.catalog-child .catalog-editor{background:#fff}.catalog-child .scroll{max-height:320px;overflow:auto}.catalog-makes-table td input{min-width:145px}.catalog-makes-table td:last-child{white-space:nowrap}.catalog-makes-table td:last-child button{font-size:13px;padding:8px 10px} </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><button class="app-exit-button" type="button" aria-label="Выйти из приложения" title="Выход" onclick="exitAlloGarage()">×</button></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown" ontoggle="syncMainMenus(this)"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
   <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button>
@@ -147,9 +147,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
     <div id="assignments"></div>
 </div></details></div><div id="dir-makes" class="directory-screen">
  <div class="directory-table-head"><h3>Производители автомобилей</h3><span id="directoryTotal-makes" class="muted"></span></div>
- <p class="muted">Нажмите «Модели» напротив производителя, чтобы открыть его подсправочник.</p>
- <div class="scroll"><table class="directory-data"><thead><tr><th>Производитель</th><th>Страна</th><th>Действие</th></tr></thead><tbody id="catalogRows-makes"></tbody></table></div>
- <section class="catalog-child hidden" id="makeModelsPanel" aria-label="Модели выбранного производителя"><div class="directory-table-head"><h4 id="makeModelsTitle">Модели производителя</h4><button type="button" class="secondary" onclick="closeMakeModels()">Закрыть</button></div><div class="scroll"><table class="directory-data"><thead><tr><th>Модель</th><th>Действие</th></tr></thead><tbody id="makeModelsRows"></tbody></table></div><div class="catalog-editor"><h4 id="makeModelEditTitle">Добавить модель</h4><input type="hidden" id="makeModelEditId"><label>Наименование модели<input id="makeModelEditName" placeholder="Например, Хантер"></label><div class="car-doc-actions"><button type="button" onclick="saveMakeModel()">Сохранить модель</button><button type="button" class="secondary" onclick="clearMakeModel()">Очистить</button></div></div></section><div class="catalog-editor"><h4 id="catalogTitle-makes">Добавить производителя</h4><input type="hidden" id="catalogId-makes"><div class="grid"><label>Производитель<input id="catalogMakeName" placeholder="Например, УАЗ"></label><label>Страна<input id="catalogMakeCountry" placeholder="Россия"></label></div><div class="car-doc-actions"><button type="button" onclick="saveCatalog('makes')">Сохранить</button><button type="button" class="secondary" onclick="clearCatalog('makes')">Очистить</button></div></div>
+ <div class="scroll"><table class="directory-data catalog-makes-table"><thead><tr><th>Производитель</th><th>Страна</th><th>Действие</th></tr></thead><tbody id="catalogRows-makes"></tbody></table></div>
 </div>
 <div id="dir-models" class="directory-screen">
  <div class="directory-table-head"><h3>Модели автомобилей</h3><span id="directoryTotal-models" class="muted"></span></div>
@@ -162,7 +160,7 @@ main:has(> #driverJournal:not(.hidden)){display:flex;flex-direction:column;overf
  <div class="catalog-editor"><h4 id="catalogTitle-engines">Добавить двигатель</h4><input type="hidden" id="catalogId-engines"><div class="grid"><label>Производитель<select id="catalogEngineMake"></select></label><label>Модель двигателя<input id="catalogEngineName"></label><label>Тип двигателя<input id="catalogEngineType" placeholder="Бензиновый / дизельный"></label><label>Топливо<input id="catalogEngineFuel" placeholder="АИ-95 / ДТ"></label><label>Объём, см³<input id="catalogEngineVolume" type="number" min="0" step="1" inputmode="numeric"></label><label>Мощность, кВт<input id="catalogEngineKw" type="number" min="0" step="0.01" inputmode="decimal"></label><label>Мощность, л. с.<input id="catalogEngineHp" type="number" min="0" step="0.01" inputmode="decimal"></label></div><div class="car-doc-actions"><button type="button" onclick="saveCatalog('engines')">Сохранить</button><button type="button" class="secondary" onclick="clearCatalog('engines')">Очистить</button></div></div>
 </div><div id="dir-cars" class="directory-screen"><div class="directory-table-head"><h3>Автомобили</h3><span id="directoryTotal-cars" class="muted"></span></div><p class="muted">Нажмите на автомобиль в таблице, чтобы открыть его карточку.</p><div class="scroll"><table class="directory-data"><thead id="directoryHead-cars"></thead><tbody id="directoryRows-cars"></tbody></table></div><section id="carCard" class="car-card hidden" aria-label="Карточка автомобиля"><div class="car-card-header"><h3 id="carCardTitle">Карточка автомобиля</h3><button class="secondary" type="button" onclick="closeCarCard()" aria-label="Закрыть карточку">×</button></div><div class="car-tabs" role="tablist" aria-label="Разделы автомобиля"><button class="active" type="button" onclick="openCarTab('main')" data-car-tab="main">Основная</button><button type="button" onclick="openCarTab('owner')" data-car-tab="owner">Собственник</button><button type="button" onclick="openCarTab('docs')" data-car-tab="docs">Документы</button><button type="button" onclick="openCarTab('specs')" data-car-tab="specs">Характеристики</button></div><div id="carCardFields" class="car-card-fields"></div><p id="carCardStatus" class="muted" role="status"></p><div class="car-card-actions"><button type="button" onclick="saveCarCard()">Сохранить</button><button type="button" class="secondary" onclick="closeCarCard()">Закрыть</button></div></section><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Новый автомобиль</h2><p class="muted">Для создания достаточно госномера. Документы можно заполнить сразу, а одометр, топливо и нормы — позже, перед первой путёвкой.</p><div class="grid"><div><label>Госномер</label><input id="newPlate"></div><div><label>Модель</label><input id="newModel"></div><div><label>Исходный одометр, км</label><input id="newOdo" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Исходный остаток, л</label><input id="newBalance" type="number" min="0" step="0.0001" inputmode="decimal"></div><div><label>Подразделение</label><select id="newCarDept"></select></div><div><label>Летняя норма, л/100 км</label><input id="newSummer" type="number" min="0" step="0.001"></div><div><label>Зимняя норма, л/100 км</label><input id="newWinter" type="number" min="0" step="0.001"></div><div><label>Дата начала норм</label><input id="newFrom" type="date"></div><div><label>Основание (приказ)</label><input id="newOrder"></div></div><button onclick="addCar()">Создать и открыть документы →</button></div></details></div><div id="dir-norms" class="directory-screen"><div class="directory-table-head"><h3>Нормы ГСМ</h3><span id="directoryTotal-norms" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-norms"></thead><tbody id="directoryRows-norms"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Изменить нормы (с историей)</h2><div class="grid"><div><label>Автомобиль</label><select id="normCar"></select></div><div><label>Действуют с</label><input type="date" id="normFrom"></div><div><label>Лето, л/100 км</label><input type="number" min="0" step="0.001" id="normSummer"></div><div><label>Зима, л/100 км</label><input type="number" min="0" step="0.001" id="normWinter"></div><div><label>Номер приказа</label><input id="normOrder"></div></div><button onclick="addNorm()">Добавить версию нормы</button><div id="normHistory" class="scroll"></div><hr><h2>Общий зимний период</h2><div class="grid"><div><label>Начало (ММ-ДД)</label><input id="winterStart" placeholder="11-01"></div><div><label>Конец (ММ-ДД)</label><input id="winterEnd" placeholder="03-31"></div></div><button onclick="saveSeasons()">Сохранить период</button><p class="muted">Даты зимнего периода могут переходить через Новый год. Изменение настроек влияет на незакрытые расчёты; для эксплуатации потребуется версионирование календаря сезонов и закрытие месяцев.</p></div></details></div></section><section id="appSettings" class="panel hidden"><h2>⚙ Настройки</h2><p class="muted">Резервное копирование данных этого телефона. Это не синхронизация с другими телефонами.</p>  <div class="backup-tools"><strong>Мои данные на этом телефоне</strong><div><button type="button" onclick="exportLocalBackup()">Сохранить копию</button><button type="button" class="secondary" onclick="document.getElementById('restoreBackupFile').click()">Восстановить из файла</button><input id="restoreBackupFile" type="file" accept=".json,application/json" hidden onchange="restoreLocalBackup(event)"></div><small>Сохраните копию до добавления приложения на главный экран или смены телефона. Копия содержит все локальные журналы и справочники (без фотографий).</small></div>
 <div class="backup-tools"><strong>Версия приложения</strong><div><button type="button" onclick="updateAlloGarage()" id="updateAppButton">↻ Обновить</button></div><small id="updateAppStatus" role="status">Проверить и загрузить последнюю версию сайта. Журналы на телефоне сохраняются.</small></div>
-<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.36 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
+<button class="secondary" type="button" onclick="showDriverJournal()">← Вернуться в журнал</button></section></main><div class="foot">АЛЛО ГАРАЖ · v0.6.37 · не заменяет утверждённый путевой лист и бухгалтерские документы</div><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script>
 const KEY='garage_gsm_proto_v1';
 const desktopLayoutQuery=window.matchMedia('(min-width:900px)');
 function applyInterfaceMode(){
@@ -175,7 +173,7 @@ applyInterfaceMode();
 if(desktopLayoutQuery.addEventListener)desktopLayoutQuery.addEventListener('change',applyInterfaceMode);
 else if(desktopLayoutQuery.addListener)desktopLayoutQuery.addListener(applyInterfaceMode);
 
-const APP_VERSION='0.6.36';
+const APP_VERSION='0.6.37';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -298,37 +296,21 @@ function renderDirectoryTables(){
 
 function catalogMakeName(id){return db.makes.find(m=>m.id===id)?.name||'—'}
 
-let selectedMakeForModels=null;
-function openMakeModels(id){
- const make=db.makes.find(m=>m.id===id);if(!make)return;
- selectedMakeForModels=id;$('makeModelsPanel').classList.remove('hidden');
- clearMakeModel();renderMakeModels();$('makeModelsPanel').scrollIntoView({block:'nearest'});
+let editingMakeId=null;
+function editMakeRow(id){
+ editingMakeId=id;renderCatalogs();
+ const input=$('makeRowName');if(input)input.focus();
 }
-function closeMakeModels(){selectedMakeForModels=null;$('makeModelsPanel').classList.add('hidden');clearMakeModel()}
-function clearMakeModel(){$('makeModelEditId').value='';$('makeModelEditName').value='';$('makeModelEditTitle').textContent='Добавить модель'}
-function editMakeModel(id){
- const m=db.models.find(m=>m.id===id&&m.makeId===selectedMakeForModels);if(!m)return;
- $('makeModelEditId').value=m.id;$('makeModelEditName').value=m.name;
- $('makeModelEditTitle').textContent='Изменить модель';$('makeModelEditName').focus();
+function cancelMakeRow(){editingMakeId=null;renderCatalogs()}
+function saveMakeRow(){
+ const name=$('makeRowName')?.value.trim()||'',country=$('makeRowCountry')?.value.trim()||'';
+ if(!name)return alert('Введите производителя.');
+ if(db.makes.some(m=>m.id!==editingMakeId&&m.name.toLocaleLowerCase('ru')===name.toLocaleLowerCase('ru')))return alert('Такой производитель уже есть.');
+ if(editingMakeId){const found=db.makes.find(m=>m.id===editingMakeId);if(!found)return alert('Производитель не найден.');found.name=name;found.country=country;}
+ else db.makes.push({id:uid(),name,country});
+ editingMakeId=null;persist();
+ $('directoryMessage').textContent='Производитель сохранён.';
 }
-function saveMakeModel(){
- const make=db.makes.find(m=>m.id===selectedMakeForModels);if(!make)return alert('Выберите производителя.');
- const id=$('makeModelEditId').value,name=$('makeModelEditName').value.trim();
- if(!name)return alert('Укажите модель.');
- if(db.models.some(m=>m.id!==id&&m.makeId===make.id&&m.name.toLocaleLowerCase('ru')===name.toLocaleLowerCase('ru')))return alert('Такая модель уже есть.');
- if(id){const m=db.models.find(m=>m.id===id&&m.makeId===make.id);if(!m)return alert('Модель не найдена.');m.name=name}
- else db.models.push({id:uid(),name,makeId:make.id});
- clearMakeModel();persist();$('directoryMessage').textContent='Модель сохранена для производителя «'+make.name+'».';
-}
-function renderMakeModels(){
- if(!selectedMakeForModels)return;
- const make=db.makes.find(m=>m.id===selectedMakeForModels);
- if(!make){closeMakeModels();return}
- $('makeModelsTitle').textContent='Модели: '+make.name;
- const rows=db.models.filter(m=>m.makeId===make.id);
- $('makeModelsRows').innerHTML=rows.length?rows.map(m=>'<tr><td>'+esc(m.name)+'</td><td><button type="button" class="secondary" onclick="editMakeModel(\''+esc(m.id)+'\')">Изменить</button></td></tr>').join(''):'<tr><td colspan="2">Нет моделей. Добавьте первую ниже.</td></tr>';
-}
-
 function renderCatalogs(){
  for(const [id,selectId] of [['models','catalogModelMake'],['engines','catalogEngineMake']]){
   const select=$(selectId);if(!select)continue;
@@ -336,15 +318,17 @@ function renderCatalogs(){
   select.innerHTML='<option value="">Выберите производителя</option>'+db.makes.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.name)+'</option>').join('');
   if(db.makes.some(m=>m.id===previous))select.value=previous;
  }
- const makeRows=db.makes.map(m=>'<tr><td>'+esc(m.name)+'</td><td>'+esc(m.country||'—')+'</td><td><button type="button" onclick="openMakeModels(\''+esc(m.id)+'\')">Модели ('+db.models.filter(x=>x.makeId===m.id).length+')</button> <button type="button" class="secondary" onclick="editCatalog(\'makes\',\''+esc(m.id)+'\')">Изменить</button></td></tr>');
+ const makeRows=db.makes.map(m=>editingMakeId===m.id
+  ?'<tr><td><input id="makeRowName" aria-label="Производитель" value="'+esc(m.name)+'"></td><td><input id="makeRowCountry" aria-label="Страна" value="'+esc(m.country||'')+'"></td><td><button type="button" onclick="saveMakeRow()">Сохранить</button><button type="button" class="secondary" onclick="cancelMakeRow()">Отмена</button></td></tr>'
+  :'<tr><td>'+esc(m.name)+'</td><td>'+esc(m.country||'—')+'</td><td><button type="button" class="secondary" onclick="editMakeRow(\''+esc(m.id)+'\')">Изменить</button></td></tr>');
+ if(editingMakeId===null)makeRows.push('<tr><td><input id="makeRowName" placeholder="Новый производитель" aria-label="Новый производитель"></td><td><input id="makeRowCountry" placeholder="Страна" aria-label="Страна"></td><td><button type="button" onclick="saveMakeRow()">Добавить</button></td></tr>');
  const modelRows=db.models.map(m=>'<tr><td>'+esc(catalogMakeName(m.makeId))+'</td><td>'+esc(m.name)+'</td><td><button type="button" class="secondary" onclick="editCatalog(\'models\',\''+esc(m.id)+'\')">Изменить</button></td></tr>');
  const engineRows=db.engines.map(e=>'<tr><td>'+esc(catalogMakeName(e.makeId))+'</td><td>'+esc(e.name)+'</td><td>'+esc(e.type||'—')+'</td><td>'+esc(e.fuel||'—')+'</td><td>'+esc(e.volume||'—')+'</td><td>'+esc(e.kw||'—')+'</td><td>'+esc(e.hp||'—')+'</td><td><button type="button" class="secondary" onclick="editCatalog(\'engines\',\''+esc(e.id)+'\')">Изменить</button></td></tr>');
  for(const [name,rows,cols] of [['makes',makeRows,3],['models',modelRows,3],['engines',engineRows,8]]){
   $('catalogRows-'+name).innerHTML=rows.join('')||'<tr><td colspan="'+cols+'">Записей пока нет</td></tr>';
-  $('directoryTotal-'+name).textContent='Записей: '+rows.length;
+  $('directoryTotal-'+name).textContent='Записей: '+(name==='makes'?db.makes.length:rows.length);
  }
 }
-if(selectedMakeForModels)renderMakeModels();
 const catalogInputs={
  makes:{name:'catalogMakeName',country:'catalogMakeCountry'},
  models:{makeId:'catalogModelMake',name:'catalogModelName'},
