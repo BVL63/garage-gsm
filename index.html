@@ -1762,7 +1762,12 @@ let editingEntryId=null,editingReturn='driver';
 function lastEditableEntry(id){
  const e=db.entries.find(x=>x.id===id);
  if(!e)return 'Запись не найдена';
- if(isClosedEntry(e))return 'Закрытая путёвка защищена от обычных изменений';
+ if(isClosedEntry(e)){
+  const latest=db.entries.filter(x=>x.carId===e.carId&&isClosedEntry(x)).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.createdAt||'').localeCompare(a.createdAt||''))[0];
+  if(latest?.id!==e.id)return 'В режиме отладки можно исправить только последнюю закрытую путёвку автомобиля';
+  if(db.entries.some(x=>x.carId===e.carId&&x.id!==e.id&&x.date>e.date))return 'Существуют более поздние путёвки автомобиля';
+  return '';
+ }
  const later=db.entries.some(x=>x.carId===e.carId&&x.id!==e.id&&(x.date>e.date||(x.date===e.date&&(x.createdAt||'')>(e.createdAt||''))));
  if(later&&db.entries.some(x=>x.carId===e.carId&&x.id!==e.id&&isClosedEntry(x)))return 'Есть другие закрытые путёвки по автомобилю. Для изменения последовательности требуется корректировка.';
  return '';
@@ -1770,7 +1775,7 @@ function lastEditableEntry(id){
 function entryEditNumbers(e){
  const endText=$('editOdometer').value, fuelText=$('editRefuel').value;
  const end=Number(endText),fuel=fuelText===''?0:Number(fuelText),km=end-e.odoStart;
- const rate=Number(e.rate),used=round(km*rate/100);
+ const rate=norm(db.cars.find(c=>c.id===e.carId),e.date),used=rate===null?NaN:round(km*rate/100);
  const ending=round(e.fuelStart+fuel-used);
  const valid=endText!==''&&Number.isSafeInteger(end)&&end>=e.odoStart&&Number.isFinite(fuel)&&fuel>=0&&Number.isFinite(rate)&&rate>=0&&ending>=0&&(!e.weekend||(km===0&&fuel===0));
  return {end,km,fuel,used,ending,valid};
@@ -1778,7 +1783,7 @@ function entryEditNumbers(e){
 function previewEntryEdit(){
  const e=db.entries.find(x=>x.id===editingEntryId);if(!e)return;
  const n=entryEditNumbers(e);
- $('editCalc').textContent='Изменения сохранятся без расчётов. Контроль выполняется при закрытии путёвки.';
+ $('editCalc').textContent=isClosedEntry(e)?(n.valid?'Пробег: '+n.km+' км · Расход: '+n.used+' л · Остаток: '+n.ending+' л. Статус «Закрыта» сохранится.':'Проверьте показания и остаток топлива.'):'Контроль расчётов выполняется при закрытии путёвки.';
 }
 function startEntryEdit(id,mode){
  const reason=lastEditableEntry(id);if(reason)return alert(reason);
@@ -1802,9 +1807,11 @@ function saveEntryEdit(){
  if(endText!==''&&(!Number.isSafeInteger(+endText)||+endText<0))return alert('Проверьте одометр.');
  if(fuelText!==''&&(!Number.isFinite(+fuelText)||+fuelText<0))return alert('Проверьте заправку.');
  if(!e.historical&&(!/^\d+$/.test(sheet)||db.entries.some(x=>x.id!==e.id&&x.year===e.year&&x.sheet===sheet)))return alert('Проверьте номер путевого листа: он должен быть числовым и уникальным в году.');
+ if(isClosedEntry(e)&&(!n.valid||!Number.isFinite(e.odoStart)||!Number.isFinite(e.fuelStart)))return alert('Проверьте одометр, заправку и остаток топлива. Закрытая путёвка должна сохранить корректные расчёты.');
  if(!confirm('Сохранить исправленную запись за '+e.date+'?'))return;
+ const wasClosed=isClosedEntry(e),oldStatus=e.status;
  const before={sheet:e.sheet,odoEnd:e.odoEnd,km:e.km,fuel:e.fuel,consumption:e.consumption,fuelEnd:e.fuelEnd};
- e.sheet=e.historical?'':sheet;e.odoEnd=endText===''?null:+endText;e.km=endText===''||!Number.isFinite(e.odoStart)?null:(+endText>=e.odoStart?+endText-e.odoStart:null);e.fuel=fuelText===''?null:+fuelText;e.consumption=null;e.fuelEnd=null;e.rate=null;e.status='added';
+ e.sheet=e.historical?'':sheet;e.odoEnd=endText===''?null:+endText;e.km=endText===''||!Number.isFinite(e.odoStart)?null:(+endText>=e.odoStart?+endText-e.odoStart:null);e.fuel=fuelText===''?null:+fuelText;e.consumption=wasClosed?n.used:null;e.fuelEnd=wasClosed?n.ending:null;e.rate=wasClosed?norm(db.cars.find(c=>c.id===e.carId),e.date):null;e.status=wasClosed?oldStatus:'added';
  (db.editLog??=[]).push({time:new Date().toISOString(),action:'edit',id:e.id,before,after:{sheet:e.sheet,odoEnd:e.odoEnd,km:e.km,fuel:e.fuel,consumption:e.consumption,fuelEnd:e.fuelEnd}});
  persist();cancelEntryEdit();alert('Изменения сохранены.');
 }
