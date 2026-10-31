@@ -373,13 +373,13 @@ main{min-height:0;min-width:0}
 <div class="journal-window-title"><h2>Журнал диагностики автомобилей</h2><button type="button" class="journal-window-close" aria-label="Закрыть журнал" title="Закрыть журнал" onclick="tab('documents')">×</button></div>
 <div class="obd-car-row"><label for="obdCar">Автомобиль</label><select id="obdCar" onchange="renderObdReports()"></select></div>
 <h3>Журнал ошибок</h3><div id="obdErrorJournal"></div>
-<div class="obd-add-actions"><button type="button" onclick="toggleObdForm()">+ Добавить отчёт</button></div>
 <div id="obdAddForm" class="hidden"><label>Дата диагностики (из отчёта) <input id="obdDate" type="datetime-local" step="1"></label><div id="obdDateHint" style="font-size:12px;color:#526579">Вставьте отчёт — дата и время определятся автоматически. При необходимости их можно изменить вручную.</div>
 <label>Профиль / ЭБУ <input id="obdTitle" placeholder="Car Scanner · Bosch ME17.9.7"></label>
 <label>Загрузить отчёт (.txt) <input id="obdFile" type="file" accept=".txt,text/plain" onchange="importObdFile(this)"></label><label>Отчёт Car Scanner <textarea id="obdRaw" rows="9" placeholder="Вставьте полный текст отчёта" oninput="detectObdReportDate()"></textarea></label>
 <label>Примечание / ремонт <textarea id="obdNote" rows="3"></textarea></label>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" onclick="saveObdReport()">Сохранить отчёт</button><button type="button" class="secondary" onclick="clearObdForm()">Очистить</button><button type="button" class="secondary" onclick="toggleObdForm(false)">Отмена</button></div>
-<p id="obdSaveNotice" role="status" style="color:#17633b"></p></div><h3>Исходные отчёты</h3><div id="obdReportList"></div></section><section class="panel" id="driverJournal">
+<p id="obdSaveNotice" role="status" style="color:#17633b"></p></div><h3>Исходные отчёты</h3><div id="obdReportList"></div><div class="obd-add-actions"><button type="button" onclick="toggleObdForm()">+ Добавить отчёт</button></div>
+</section><section class="panel" id="driverJournal">
   <div class="journal-window-title"><h2>Журнал: Путевые листы водителя</h2><button type="button" class="journal-window-close" aria-label="Закрыть журнал" title="Закрыть журнал" onclick="tab('documents')">×</button></div>
   <div class="driver-actions" role="toolbar" aria-label="Действия журнала">
 
