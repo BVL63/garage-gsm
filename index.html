@@ -550,8 +550,8 @@ main{min-height:0;min-width:0}
 <div style="margin:12px 0"><label for="excelDriverAll">Водитель для всех новых записей</label><select id="excelDriverAll" onchange="applyGarageExcelDriverToAll()"><option value="">— Выберите водителя —</option></select><small class="muted">Можно выбрать одного водителя для всех поездок или назначить разных в таблице ниже. Уже сохранённые путёвки не изменятся.</small></div><div id="excelImportMessage" class="muted"></div><div id="excelDriverMessage" class="muted"></div><div class="scroll"><table><thead><tr><th>Дата</th><th>Пробег</th><th>Одометр</th><th>Расход, л</th><th>Заправил, л</th><th>Остаток, л</th><th>Водитель</th><th>Проверка</th></tr></thead><tbody id="excelRows"></tbody></table></div>
 <button id="excelCommit" type="button" onclick="commitGarageExcel()" disabled>Загрузить проверенные строки</button>
 </details><div class="grid"><div><label>Подразделение</label><select id="deptFilter" onchange="render()"></select></div><div><label>Месяц</label><input type="month" id="monthFilter" onchange="render()"></div></div><div class="grid" id="stats"></div><div class="scroll"><table><thead><tr><th>Дата</th><th>Подразделение</th><th>Автомобиль</th><th>Водитель</th><th>Год / № листа</th><th>Пробег, км</th><th>Заправлено, л</th><th>Норма</th><th>Расход, л</th><th>Статус</th><th>Фото</th><th>Действие</th></tr></thead><tbody id="rows"></tbody></table></div><button onclick="exportCsv()">Экспорт CSV для Excel</button><button class="secondary" onclick="exportJson()">Резервная копия JSON (без фотографий)</button><label>Восстановить резервную копию JSON <input type="file" accept="application/json,.json" onchange="importJson(event)"></label></section><section id="managerDetail" class="panel hidden"><div class="journal-head"><h2>Путевой лист</h2><button type="button" class="secondary" onclick="tab('manager')">← Журнал</button></div><div id="managerSheetDetails"></div></section><section id="entryEdit" class="panel hidden compact-waybill-edit">
-<div class="journal-head"><h2>Путевой лист</h2><button type="button" class="secondary" onclick="cancelEntryEdit()">×</button></div>
-<div class="sheet-form waybill-identity"><div class="sheet-row"><label>Автомобиль</label><output id="editCarSummary"></output></div><div class="sheet-row"><label>Водитель</label><output id="editDriverSummary"></output></div></div>
+<div class="journal-head"><h2 id="unifiedWaybillTitle">Путевой лист</h2><button type="button" class="secondary" onclick="cancelEntryEdit()" aria-label="Закрыть">×</button></div>
+<div class="sheet-form waybill-identity"><div class="sheet-row"><label>Автомобиль</label><output id="editCarSummary"></output><select id="unifiedCar" class="hidden" onchange="refreshUnifiedNew()"></select></div><div class="sheet-row"><label>Водитель</label><output id="editDriverSummary"></output><select id="unifiedDriver" class="hidden"></select></div></div>
 <div class="sheet-form">
 <div class="sheet-row"><label for="editSheetNumber">Путевой лист №</label><input id="editSheetNumber" inputmode="numeric"></div>
 <div class="sheet-row"><label for="editDateDisplay">Дата</label><input id="editDateDisplay" type="text" inputmode="numeric" placeholder="дд.мм.гг" maxlength="10" onblur="syncEditDate()"><input id="editDate" type="hidden"></div>
@@ -563,7 +563,7 @@ main{min-height:0;min-width:0}
 <div class="sheet-row"><label>Остаток расчётный, л</label><output id="editEndSummary">—</output></div><div class="sheet-row"><label>Расход по норме, л</label><output id="editUsedSummary">—</output></div>
 <input id="editCar" type="hidden"><input id="editDriver" type="hidden"><input id="editOdoStart" type="hidden"><input id="editFuelStart" type="hidden"><input id="editFuelUsed" type="hidden"><input id="editFuelEnd" type="hidden">
 </div><p id="editCalc" class="muted"></p>
-<div class="edit-actions"><button type="button" onclick="saveEntryEdit()">Сохранить</button><button type="button" id="editCloseWaybill" onclick="saveEntryEdit(true)">Закрыть</button><button type="button" class="secondary" onclick="cancelEntryEdit()">Отмена</button></div>
+<div class="edit-actions"><button type="button" id="unifiedEditButton" class="secondary hidden" onclick="enableUnifiedEdit()">Изменить</button><button type="button" id="unifiedSaveButton" onclick="saveUnifiedWaybill(false)">Сохранить</button><button type="button" id="editCloseWaybill" onclick="saveUnifiedWaybill(true)">Закрыть путёвку</button><button type="button" class="secondary" onclick="cancelEntryEdit()">Закрыть</button></div>
 </section><section id="settings" class="panel hidden"><p id="directoryMessage" class="good" role="status"></p><div id="directoryMenu" class="directory-menu"><button onclick="openDirectory('cars')">🚙 Автомобили</button><button onclick="openDirectory('makes')">🏭 Производители</button><button onclick="openDirectory('models')">🚗 Модели автомобилей</button><button onclick="openDirectory('variants')">🚘 Модификации</button><button onclick="openDirectory('engines')">⚙ Двигатели</button><button onclick="openDirectory('drivers')">👤 Водители</button><button onclick="openDirectory('departments')">🏢 Подразделения</button><button onclick="openDirectory('assignments')">🔗 Закрепление водителей</button><button onclick="openDirectory('norms')">⛽ Нормы ГСМ</button></div><div id="dir-departments" class="directory-screen"><div class="directory-table-head"><h3>Подразделения</h3><span id="directoryTotal-departments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-departments"></thead><tbody id="directoryRows-departments"></tbody></table></div><details class="directory-edit" id="carsJournalEditor"><summary>Новый автомобиль</summary><div class="directory-edit-content"><h3>Подразделения</h3><div class="grid"><div><label>Подразделение</label><input id="newDept" placeholder="Название"></div><div><label>&nbsp;</label><button onclick="addDept()">Добавить подразделение</button></div></div></div></details></div><div id="dir-drivers" class="directory-screen"><div class="directory-table-head"><h3>Водители</h3><span id="directoryTotal-drivers" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-drivers"></thead><tbody id="directoryRows-drivers"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h3>Водители</h3><div class="grid"><div><label>ФИО водителя</label><input id="newDriver" placeholder="Фамилия И.О."></div><div><label>&nbsp;</label><button onclick="addDriver()">Добавить водителя</button></div></div></div></details></div>    <div id="dir-assignments" class="directory-screen"><div class="directory-table-head"><h3>Закрепления</h3><span id="directoryTotal-assignments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-assignments"></thead><tbody id="directoryRows-assignments"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Закрепление водителей за автомобилями</h2>
     <p class="muted">За автомобилем можно закрепить несколько водителей. Для каждого водителя назначается один автомобиль по умолчанию. При оформлении новой путёвки водитель может выбрать любую другую машину.</p>
     <div class="grid"><div><label>Водитель</label><select id="assignDriver" onchange="renderAssignments()"></select></div><div><label>Закрепить автомобиль</label><select id="assignCar"></select></div></div>
@@ -1976,25 +1976,10 @@ function showSavedWaybillPreview(id){
  $('journalCar').value=entry.carId;
  journalMonth=entry.date.slice(0,7);
  renderDriverJournal();
- showJournalEntry(id);
+ startEntryEdit(id,'driver',true);
 }
-function openNewSheet(event){
-  // Navigation must work even when form initialization fails in mobile Safari.
-  ['driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents'].forEach(id=>$(id).classList.add('hidden'));
-  const form=document.getElementById('driver');
-  form.classList.remove('hidden');
-  document.getElementById('journalDetail').classList.add('hidden');
-  const selected=document.getElementById('journalCar').value;
-  if(selected)document.getElementById('vehicle').value=selected;
-  try{newSheet();preview();}catch(err){
-    const msg=document.getElementById('entryMessage');
-    if(msg)msg.textContent='Форма открыта. Проверьте данные справочников. '+(err&&err.message?err.message:'');
-    console.error('New sheet initialization:',err);
-  }
-  if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);
-  window.scrollTo(0,0);
-  return true;
-}
+function openNewSheet(event){return openUnifiedNew();}
+
 let selectedJournalEntryId=null;
 
 
@@ -2181,7 +2166,7 @@ function selectDriverJournalRow(id){
 function editDriverJournalRow(id){
  selectedJournalEntryId=id;
  driverJournalLastTap={id:null,time:0};
- showJournalEntry(id);
+ startEntryEdit(id,'driver',true);
 }
 function navigateJournalPreview(direction){
  const current=db.entries.find(e=>e.id===selectedJournalEntryId);
@@ -2252,7 +2237,15 @@ function saveRecordDriver(id){
  if(!$('managerDetail').classList.contains('hidden'))showManagerSheet(id);else showJournalEntry(id);
 }
 
-let editingEntryId=null,editingReturn='driver';
+let editingEntryId=null,editingReturn='driver',unifiedMode='view';
+function unifiedDraft(){const car=db.cars.find(c=>c.id===$('unifiedCar').value),start=startingValues(car);return {id:null,carId:car?.id,date:$('editDate').value||today(),odoStart:start.odo,fuelStart:start.fuel,status:'added'};}
+function currentUnifiedEntry(){return unifiedMode==='new'?unifiedDraft():db.entries.find(x=>x.id===editingEntryId);}
+function refreshUnifiedNew(){if(unifiedMode!=='new')return;const e=unifiedDraft(),car=db.cars.find(c=>c.id===e.carId);$('editCarSummary').textContent=car?.plate||'—';$('editOdoStart').value=e.odoStart??'';$('editFuelStart').value=e.fuelStart??'';$('editOdoSummary').textContent=e.odoStart??'—';$('editFuelSummary').textContent=e.fuelStart!=null?Number(e.fuelStart).toFixed(4):'—';$('editOdometer').value='';$('editKm').value='';previewEntryEdit();}
+function setUnifiedMode(mode){unifiedMode=mode;const viewing=mode==='view',fresh=mode==='new';$('unifiedWaybillTitle').textContent=fresh?'Новый путевой лист':viewing?'Путевой лист · Просмотр':'Путевой лист · Редактирование';$('unifiedCar').classList.toggle('hidden',!fresh);$('unifiedDriver').classList.toggle('hidden',!fresh);$('editCarSummary').classList.toggle('hidden',fresh);$('editDriverSummary').classList.toggle('hidden',fresh);['editSheetNumber','editDateDisplay','editOdometer','editKm','editRefuel'].forEach(id=>{$(id).readOnly=viewing});$('unifiedSaveButton').classList.toggle('hidden',viewing);$('editCloseWaybill').classList.toggle('hidden',viewing);$('unifiedEditButton').classList.toggle('hidden',!viewing||!!lastEditableEntry(editingEntryId));$('editSheetNumber').disabled=viewing;applyWaybillInputMode();}
+function enableUnifiedEdit(){if(lastEditableEntry(editingEntryId))return alert(lastEditableEntry(editingEntryId));setUnifiedMode('edit');$('editSheetNumber').disabled=!!currentUnifiedEntry()?.historical;}
+function openUnifiedNew(){editingEntryId=null;editingReturn='driver';const carId=$('journalCar').value||$('vehicle').value||db.cars[0]?.id;$('unifiedCar').innerHTML=db.cars.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.plate)+'</option>').join('');$('unifiedDriver').innerHTML=db.drivers.map(d=>'<option value="'+esc(d.id)+'">'+esc(d.name)+'</option>').join('');$('unifiedCar').value=carId;$('unifiedDriver').value=$('driverId').value||db.drivers[0]?.id||'';$('editDate').value=today();$('editDateDisplay').value=editDateToDisplay(today());$('editSheetNumber').value='';$('editRefuel').value='0';setUnifiedMode('new');refreshUnifiedNew();['driver','driverJournal','manager','managerDetail','settings','documents'].forEach(id=>$(id).classList.add('hidden'));$('entryEdit').classList.remove('hidden');window.scrollTo(0,0);return true;}
+function saveUnifiedWaybill(closeAfter=false){if(unifiedMode==='view')return;if(unifiedMode!=='new')return saveEntryEdit(closeAfter);if(!syncEditDate())return alert('Проверьте дату путёвки.');const carId=$('unifiedCar').value;['date','vehicle','driverId','sheet','odoEnd','km','fuel'].forEach(id=>{const from={date:$('editDate').value,vehicle:carId,driverId:$('unifiedDriver').value,sheet:$('editSheetNumber').value,odoEnd:$('editOdometer').value,km:$('editKm').value,fuel:$('editRefuel').value};$(id).value=from[id]});setEntryMode('manual');return saveEntry(closeAfter);}
+
 function lastEditableEntry(id){
  const e=db.entries.find(x=>x.id===id);
  if(!e)return 'Запись не найдена';
@@ -2284,19 +2277,19 @@ function syncEditDate(){
  $('editDate').value=iso;$('editDateDisplay').value=editDateToDisplay(iso);previewEntryEdit();return true;
 }
 function editOdoChanged(){
- const e=db.entries.find(x=>x.id===editingEntryId);if(!e)return;
+ const e=currentUnifiedEntry();if(!e)return;
  const value=$('editOdometer').value,start=Number(e.odoStart);
  $('editKm').value=value!==''&&Number.isSafeInteger(+value)&&+value>=start?String(+value-start):'';
  previewEntryEdit();
 }
 function editKmChanged(){
- const e=db.entries.find(x=>x.id===editingEntryId);if(!e)return;
+ const e=currentUnifiedEntry();if(!e)return;
  const value=$('editKm').value,start=Number(e.odoStart);
  $('editOdometer').value=value!==''&&Number.isSafeInteger(+value)&&+value>=0&&Number.isFinite(start)?String(start+ +value):'';
  previewEntryEdit();
 }
 function previewEntryEdit(){
- const e=db.entries.find(x=>x.id===editingEntryId);if(!e)return;
+ const e=currentUnifiedEntry();if(!e)return;
  const n=entryEditNumbers(e);
  $('editFuelUsed').value=Number.isFinite(n.used)&&n.km>=0?n.used:'';
  $('editFuelEnd').value=Number.isFinite(n.ending)&&n.km>=0?n.ending:'';
@@ -2304,8 +2297,8 @@ function previewEntryEdit(){
  $('editEndSummary').textContent=$('editFuelEnd').value||'—';
  $('editCalc').textContent=isClosedEntry(e)?(n.valid?'Статус «Закрыта» сохранится.':'Проверьте показания и остаток топлива.'):'Контроль расчётов выполняется при закрытии путёвки.';
 }
-function startEntryEdit(id,mode){
- const reason=lastEditableEntry(id);if(reason)return alert(reason);
+function startEntryEdit(id,mode,viewOnly=false){
+ const reason=lastEditableEntry(id);if(reason&&!viewOnly)return alert(reason);
  closeJournalEntry();
  const e=db.entries.find(x=>x.id===id);
  editingEntryId=id;editingReturn=mode;
@@ -2321,7 +2314,7 @@ function startEntryEdit(id,mode){
  $('editFuelSummary').textContent=Number.isFinite(Number(e.fuelStart))?Number(e.fuelStart).toFixed(4):'—';
  $('editOdometer').value=e.odoEnd??'';$('editKm').value=e.km??'';$('editRefuel').value=e.fuel??'';previewEntryEdit();
  ['driver','driverJournal','manager','managerDetail','settings','documents'].forEach(x=>$(x).classList.add('hidden'));
- $('entryEdit').classList.remove('hidden');$('editCloseWaybill').hidden=isClosedEntry(e)||!!e.weekend||!!e.historical;window.scrollTo(0,0);
+ $('entryEdit').classList.remove('hidden');setUnifiedMode(viewOnly?'view':'edit');$('editCloseWaybill').hidden=isClosedEntry(e)||!!e.weekend||!!e.historical;window.scrollTo(0,0);
 }
 function cancelEntryEdit(){
  editingEntryId=null;$('entryEdit').classList.add('hidden');
