@@ -663,7 +663,11 @@ main{min-height:0;min-width:0}
 <div id="driverCard" class="hidden" style="border:1px solid #bccfe0;border-radius:10px;padding:12px;margin:12px 0;background:#f8fbfe">
 <div style="display:flex;align-items:center;justify-content:space-between"><h3 id="driverCardTitle">Карточка водителя</h3><button type="button" class="secondary" onclick="closeDriverCard()">✕</button></div>
 <div class="grid">
-<div><label>ФИО водителя</label><input id="driverCardName"></div>
+<div><label>Фамилия</label><input id="driverCardSurname" autocomplete="family-name"></div>
+<div><label>Имя</label><input id="driverCardFirstName" autocomplete="given-name"></div>
+<div><label>Отчество</label><input id="driverCardPatronymic"></div>
+<div><label>Родился</label><input id="driverCardBirthday" type="date"></div>
+<div><label>Телефон</label><input id="driverCardPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (999) 999-99-99"></div>
 <div><label>Подразделение</label><select id="driverCardDept"></select></div>
 <div><label>Отпуск, календарных дней</label><input id="driverCardVacationDays" type="number" min="0" max="366" step="1"></div>
 <div><label>Статус</label><select id="driverCardStatus"><option value="active">Работает</option><option value="dismissed">Уволен</option></select></div>
@@ -1755,7 +1759,12 @@ function openDriverCard(id){
  const d=db.drivers.find(x=>x.id===id);if(!d)return;
  driverCardCurrentId=id;
  $('driverCardTitle').textContent='Карточка: '+d.name;
- $('driverCardName').value=d.name;
+ const legacyParts=String(d.name||'').trim().split(/\s+/);
+ $('driverCardSurname').value=d.surname??legacyParts[0]??'';
+ $('driverCardFirstName').value=d.firstName??legacyParts[1]??'';
+ $('driverCardPatronymic').value=d.patronymic??legacyParts.slice(2).join(' ');
+ $('driverCardBirthday').value=d.birthday||'';
+ $('driverCardPhone').value=d.phone||'';
  $('driverCardVacationDays').value=d.vacationDays??36;
  $('driverCardStatus').value=d.status==='dismissed'?'dismissed':'active';
  $('driverCardDept').innerHTML='<option value="">Не указано</option>'+db.departments.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
@@ -1776,15 +1785,21 @@ function refreshDriverCardDefault(){
 }
 function saveDriverCard(){
  const d=db.drivers.find(x=>x.id===driverCardCurrentId);if(!d)return;
- const name=$('driverCardName').value.trim().replace(/\s+/g,' ');
+ const surname=$('driverCardSurname').value.trim();
+ const firstName=$('driverCardFirstName').value.trim();
+ const patronymic=$('driverCardPatronymic').value.trim();
+ const birthday=$('driverCardBirthday').value;
+ const phone=$('driverCardPhone').value.trim();
+ const name=[surname,firstName,patronymic].filter(Boolean).join(' ');
  const raw=$('driverCardVacationDays').value.trim(),days=Number(raw);
- if(!name)return alert('Укажите ФИО.');
+ if(!surname)return alert('Укажите фамилию.');
+ if(birthday&&!/^\d{4}-\d{2}-\d{2}$/.test(birthday))return alert('Проверьте дату рождения.');
  if(!raw||!Number.isInteger(days)||days<0||days>366)return alert('Неверное количество дней отпуска.');
  if(db.drivers.some(x=>x.id!==d.id&&x.name.trim().toLowerCase()===name.toLowerCase()))return alert('Водитель с таким ФИО уже существует.');
  const ids=[...document.querySelectorAll('#driverCardCars .driver-car-option:checked')].map(x=>x.value);
  const primary=$('driverCardDefaultCar').value||null;
  const previous={...d,carIds:[...(d.carIds||[])]};
- Object.assign(d,{name,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,carIds:ids,defaultCarId:primary});
+ Object.assign(d,{name,surname,firstName,patronymic,birthday,phone,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,carIds:ids,defaultCarId:primary});
  (db.editLog??=[]).push({time:new Date().toISOString(),action:'edit_driver',driverId:d.id,previous});
  persist();closeDriverCard();
 }
