@@ -1725,7 +1725,7 @@ function newSheet(){$('sheet').value='';$('odoEnd').value='';$('km').value='';$(
 function addDept(){let name=$('newDept').value.trim();if(!name)return alert('Укажите подразделение');db.departments.push({id:uid(),name});$('newDept').value='';persist()}function importVacation2026Drivers(){
  const names=['Киселев','Шпаков','Бахметьев','Винник','Данилюк','Дунаев','Илюхин','Карнацкий','Ломов','Мальцев','Богурцев','Каминик','Кулеш'];
  const norm=v=>String(v||'').trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/[^а-я]/g,'');
- const existing=new Set(db.drivers.map(d=>norm(String(d.name||'').split(/\\s+/)[0])));
+ const existing=new Set(db.drivers.map(d=>norm(String(d.name||'').split(/\s+/)[0])));
  const missing=names.filter(name=>!existing.has(norm(name)));
  if(!missing.length)return alert('Все 13 водителей из графика 2026 уже есть в справочнике.');
  if(!confirm('Добавить '+missing.length+' водителей из графика 2026?\\n\\n'+missing.join(', ')+'\\n\\nДля новых водителей норма отпуска — 36 календарных дней.'))return;
@@ -1739,7 +1739,7 @@ function deleteDuplicateDriver(id){
  const entries=db.entries.filter(e=>e.driverId===id);
  const vacationRefs=[...(db.vacations||[]),...(db.vacationSchedules||[])].filter(v=>v.driverId===id);
  const candidates=db.drivers.filter(d=>d.id!==id);
- if(!candidates.length)return alert('Нельзя удалить единственного водителя.');
+ if(!candidates.length&&(entries.length||vacationRefs.length))return alert('Нельзя удалить единственного водителя со связанными документами.');
  let target=null;
  if(entries.length||vacationRefs.length){
   const list=candidates.map((d,i)=>(i+1)+'. '+d.name).join('\n');
