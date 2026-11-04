@@ -578,7 +578,7 @@ main{min-height:0;min-width:0}
    <button type="button" class="secondary" onclick="saveVacationRequest('draft')">Сохранить черновик</button>
   </div>
  </details>
- <div style="margin:12px 0"><button type="button" class="secondary" onclick="importVacation2026Plan()">Загрузить график 2026 из Excel</button><p class="muted">25 периодов и 13 водителей из проверенного файла «Отпуск 2026.xlsx». Повторный импорт не создаёт дубликатов. Перед загрузкой показывается подтверждение.</p></div><h3 style="margin:18px 0 7px">Заявки водителей</h3>
+ <div style="margin:12px 0"><button type="button" class="secondary" onclick="importVacation2026Plan()">Загрузить график 2026 из Excel</button><p class="muted">25 периодов и 13 водителей из проверенного файла «Отпуск 2026.xlsx». Повторный импорт не создаёт дубликатов. Перед загрузкой показывается подтверждение.</p></div><h3 style="margin:18px 0 7px">Таблица отпусков по месяцам</h3><p class="muted">В каждой ячейке — дни месяца, приходящиеся на отпуск. ⚠ — пересечение внутри подразделения. Нажмите на период для просмотра дат.</p><div class="scroll" style="overflow-x:auto"><table id="vacationCalendar" style="min-width:1050px;border-collapse:collapse"></table></div><p id="vacationCalendarTotals" class="muted"></p><h3 style="margin:18px 0 7px">Заявки водителей</h3>
  <div class="scroll"><table><thead><tr><th>Водитель</th><th>Период</th><th>Дней</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="vacationRows"></tbody></table></div>
  <p id="vacationTotals" class="muted"></p>
 </section><section class="panel hidden" id="documents"><h2>Документы</h2><div class="documents-actions"><button type="button" onclick="showDriverJournal()">Журнал водителя</button><button type="button" onclick="tab('manager')">Журнал заведующего гаражом</button></div></section><style>
@@ -1852,6 +1852,30 @@ function updateVacationActual(id){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(from)||(until&&!/^\d{4}-\d{2}-\d{2}$/.test(until))||(until&&until<from))return alert('Неверные фактические даты.');
  x.actualStart=from;x.actualEnd=until;(x.history??=[]).push({actualStart:from,actualEnd:until,at:new Date().toISOString()});persist();
 }
+function renderVacationCalendar(year,filter){
+ const el=$('vacationCalendar');if(!el)return;
+ const months=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+ const all=(db.vacationRequests||[]).filter(x=>!['rejected','cancelled','draft'].includes(x.status)&&x.start&&x.end&&x.start<=year+'-12-31'&&x.end>=year+'-01-01');
+ const drivers=db.drivers.filter(d=>(!filter||d.id===filter)&&all.some(x=>x.driverId===d.id)).sort((a,b)=>(db.departments.find(z=>z.id===a.dept)?.name||'Я Без подразделения').localeCompare(db.departments.find(z=>z.id===b.dept)?.name||'Я Без подразделения','ru')||a.name.localeCompare(b.name,'ru'));
+ const rows=[];let currentDept=null;
+ for(const d of drivers){
+  const dept=db.departments.find(z=>z.id===d.dept)?.name||'Без подразделения';
+  if(dept!==currentDept){rows.push('<tr><td colspan="14" style="background:#e9eff5;font-weight:700;text-align:left;padding:8px">'+esc(dept)+'</td></tr>');currentDept=dept;}
+  const mine=all.filter(x=>x.driverId===d.id);
+  const cells=months.map((m,i)=>{
+   const first=year+'-'+String(i+1).padStart(2,'0')+'-01',last=year+'-'+String(i+1).padStart(2,'0')+'-'+String(new Date(Number(year),i+1,0).getDate()).padStart(2,'0');
+   const periods=mine.filter(x=>x.start<=last&&x.end>=first);
+   if(!periods.length)return '<td style="text-align:center;border:1px solid #d7dfe7">—</td>';
+   const days=periods.reduce((n,x)=>{const a=new Date(Math.max(Date.parse(x.start+'T12:00:00Z'),Date.parse(first+'T12:00:00Z'))),b=new Date(Math.min(Date.parse(x.end+'T12:00:00Z'),Date.parse(last+'T12:00:00Z')));return n+Math.round((b-a)/86400000)+1},0);
+   const overlap=periods.some(x=>d.dept&&all.some(y=>y.driverId!==d.id&&db.drivers.find(z=>z.id===y.driverId)?.dept===d.dept&&vacationOverlap(x,y)));
+   const title=periods.map(x=>vacationDate(x.start)+' — '+vacationDate(x.end)+' ('+x.days+' дн.)').join('; ');
+   return '<td title="'+esc(title)+'" style="text-align:center;border:1px solid #d7dfe7;background:'+(overlap?'#ffe0b2':'#d6f0e1')+';font-weight:600">'+days+(overlap?' ⚠':'')+'</td>';
+  });
+  rows.push('<tr><td style="position:sticky;left:0;background:#fff;min-width:155px;border:1px solid #d7dfe7">'+esc(d.name)+'</td>'+cells.join('')+'<td style="text-align:center;font-weight:700;border:1px solid #d7dfe7">'+mine.reduce((n,x)=>n+x.days,0)+'</td></tr>');
+ }
+ el.innerHTML='<thead><tr><th style="position:sticky;left:0;background:#e9eff5">Водитель</th>'+months.map(m=>'<th>'+m+'</th>').join('')+'<th>Всего</th></tr></thead><tbody>'+ (rows.join('')||'<tr><td colspan="14">Нет отпусков за выбранный год</td></tr>')+'</tbody>';
+ $('vacationCalendarTotals').textContent='Водителей: '+drivers.length+'. Периодов: '+all.filter(x=>!filter||x.driverId===filter).length+'. Зелёный — отпуск; оранжевый — пересечение в подразделении.';
+}
 function renderVacations(){
  if(!$('vacationRows'))return;
  vacationOptions('vacationApplicant',false);vacationOptions('vacationDriverFilter',true);
@@ -1863,6 +1887,7 @@ function renderVacations(){
  return '<tr><td>'+esc(name)+'</td><td>'+vacationDate(x.start)+'–'+vacationDate(x.end)+(x.actualStart?'<div class="muted">Факт: '+vacationDate(x.actualStart)+'–'+vacationDate(x.actualEnd)+'</div>':'')+(overlap.length?'<div class="warn">Совпадение: '+esc(overlap.map(y=>db.drivers.find(d=>d.id===y.driverId)?.name||'Водитель').join(', '))+'</div>':'')+'</td><td>'+x.days+'</td><td>'+esc(VACATION_STATUS[x.status]||x.status)+'</td><td><button type="button" class="secondary" onclick="changeVacationStatus(\''+esc(x.id)+'\')">Статус</button><button type="button" class="secondary" onclick="updateVacationActual(\''+esc(x.id)+'\')">Факт</button></td></tr>';
  }).join('')||'<tr><td colspan="5">Заявок пока нет</td></tr>';
  $('vacationTotals').textContent='Заявок за '+year+': '+list.length+'. Дней по заявкам: '+list.reduce((a,x)=>a+x.days,0)+'.';
+ renderVacationCalendar(year,filter);
  updateVacationPreview();
 }
 
