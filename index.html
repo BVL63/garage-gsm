@@ -720,7 +720,7 @@ for(const query of [tabletLayoutQuery,desktopLayoutQuery]){
 }
 
 const APP_VERSION='0.7.25';
-const TEST_BUILD_ID='test-20261104-01';
+const TEST_BUILD_ID='test-20261104-driver-delete-02';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -886,7 +886,7 @@ function printCarsDirectory(){
 function renderDirectoryTables(){
  const data={
   departments:{columns:['Подразделение'],rows:db.departments.map(d=>[d.name])},
-  drivers:{columns:['Водитель','Основной автомобиль','Закреплено автомобилей','Отпуск, дней','Действия'],rows:db.drivers.map(d=>[d.name,db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—',(d.carIds||[]).length,d.vacationDays??36])},
+  drivers:{columns:['Водитель','Основной автомобиль','Закреплено автомобилей','Отпуск, дней'],rows:db.drivers.map(d=>[d.name,db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—',(d.carIds||[]).length,d.vacationDays??36])},
   assignments:{columns:['Водитель','Автомобиль','По умолчанию'],rows:db.drivers.flatMap(d=>(d.carIds||[]).map(id=>[d.name,db.cars.find(c=>c.id===id)?.plate||'—',d.defaultCarId===id?'Да':'Нет']))},
   cars:{columns:['Госномер','Модель','Подразделение','Нач. одометр','Нач. остаток, л'],rows:db.cars.map(c=>[c.plate,c.model||'—',db.departments.find(d=>d.id===c.dept)?.name||'—',fmtOdo(c.initialOdo),c.initialFuel==null?'—':Number(c.initialFuel).toFixed(4)])},
   norms:{columns:['Автомобиль','С даты','Лето, л/100 км','Зима, л/100 км','Приказ'],rows:db.cars.flatMap(c=>(c.norms||[]).map(n=>[c.plate,n.from,n.summer,n.winter,n.order||'—']))}
@@ -904,7 +904,7 @@ function renderDirectoryTables(){
     continue;
   }
   if(id==='drivers'){
-   body.innerHTML=db.drivers.map(d=>'<tr><td>'+esc(d.name)+'</td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" onchange="setDriverVacationDays(\''+esc(d.id)+'\',this.value)"></td><td><button type="button" class="secondary" style="padding:6px 10px" onclick="deleteDuplicateDriver(\''+esc(d.id)+'\')">Удалить</button></td></tr>').join('')||'<tr><td colspan="5">Записей пока нет</td></tr>';
+   body.innerHTML=db.drivers.map(d=>'<tr><td><div style="display:flex;align-items:center;justify-content:space-between;gap:6px"><span>'+esc(d.name)+'</span><button type="button" class="secondary" style="padding:5px 8px;font-size:12px;white-space:nowrap" aria-label="Удалить водителя '+esc(d.name)+'" onclick="deleteDuplicateDriver(\''+esc(d.id)+'\')">Удалить</button></div></td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" onchange="setDriverVacationDays(\''+esc(d.id)+'\',this.value)"></td></tr>').join('')||'<tr><td colspan="4">Записей пока нет</td></tr>';
   }else body.innerHTML=def.rows.map(row=>'<tr>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
   if(count)count.textContent='Записей: '+def.rows.length;
   filterRegistryRows(id);
