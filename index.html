@@ -545,6 +545,7 @@ main{min-height:0;min-width:0}
   <button type="button" onclick="chooseMainMenu('departments')">Подразделения</button>
   <button type="button" onclick="chooseMainMenu('assignments')">Закрепления</button>
   <button type="button" onclick="chooseMainMenu('norms')">Нормы ГСМ</button>
+  <button type="button" onclick="chooseMainMenu('calendar')">Производственный календарь</button>
  </div></details>
  <details class="nav-dropdown"><summary aria-label="Настройки">Setup <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('setup')">Настройки</button>
@@ -1622,7 +1623,7 @@ function chooseMainMenu(action){
  if(action==='driver'){showDriverJournal();return}
  if(action==='manager'){tab('manager');return}
  if(action==='obd'){tab('obdPanel');renderObdReports();return}
- if(['cars','drivers','departments','assignments','norms','makes','models','variants','engines'].includes(action)){
+ if(['cars','drivers','departments','assignments','norms','makes','models','variants','engines','calendar'].includes(action)){
   tab('settings');openDirectory(action);return;
  }
  if(action==='setup'){tab('appSettings');return}
