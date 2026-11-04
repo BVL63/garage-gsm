@@ -672,6 +672,26 @@ main{min-height:0;min-width:0}
 <div><label>Отпуск, календарных дней</label><input id="driverCardVacationDays" type="number" min="0" max="366" step="1"></div>
 <div><label>Статус</label><select id="driverCardStatus"><option value="active">Работает</option><option value="dismissed">Уволен</option></select></div>
 </div><div><label>Основной автомобиль</label><select id="driverCardDefaultCar"></select></div>
+<details id="driverCardDocuments" style="margin:14px 0;border:1px solid #cbd9e7;border-radius:10px;padding:12px">
+<summary style="font-weight:700;cursor:pointer">Документы водителя</summary>
+<p class="muted" style="margin:10px 0">Внимание: реквизиты сохраняются локально в браузере без шифрования и попадут в резервную копию. Не используйте реальные номера до настройки защищённого хранения.</p>
+<h4 style="margin:12px 0 8px">Паспорт РФ</h4>
+<div class="grid">
+<div><label>Серия и номер</label><input id="driverPassportNumber" autocomplete="off" inputmode="numeric" placeholder="0000 000000"></div>
+<div><label>Дата выдачи</label><input id="driverPassportIssued" type="date"></div>
+<div><label>Кем выдан</label><input id="driverPassportAuthority" autocomplete="off"></div>
+<div><label>Код подразделения</label><input id="driverPassportCode" autocomplete="off" placeholder="000-000"></div>
+</div>
+<h4 style="margin:14px 0 8px">Водительское удостоверение</h4>
+<div class="grid">
+<div><label>Серия и номер</label><input id="driverLicenseNumber" autocomplete="off" inputmode="numeric" placeholder="00 00 000000"></div>
+<div><label>Дата выдачи</label><input id="driverLicenseIssued" type="date"></div>
+<div><label>Действительно до</label><input id="driverLicenseExpires" type="date"></div>
+<div><label>Категории</label><input id="driverLicenseCategories" autocomplete="off" placeholder="B, C"></div>
+</div>
+<h4 style="margin:14px 0 8px">СНИЛС</h4>
+<div class="grid"><div><label>Номер СНИЛС</label><input id="driverSnils" autocomplete="off" inputmode="numeric" placeholder="000-000-000 00"></div></div>
+</details>
 <div style="display:flex;gap:10px;margin-top:14px"><button type="button" onclick="saveDriverCard()">Сохранить</button><button type="button" class="secondary" onclick="closeDriverCard()">Закрыть</button></div>
 </div><div class="scroll"><table class="directory-data"><thead id="directoryHead-drivers"></thead><tbody id="directoryRows-drivers"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h3>Водители</h3><div class="grid"><div><label>ФИО водителя</label><input id="newDriver" placeholder="Фамилия И.О."></div><div><label>Отпуск, календарных дней</label><input type="number" id="newDriverVacationDays" min="0" max="366" step="1" value="36"></div><div><label>&nbsp;</label><button onclick="addDriver()">Добавить водителя</button></div></div><button type="button" class="secondary" onclick="importVacation2026Drivers()">Добавить водителей из графика отпусков 2026</button><p class="muted">Из файла «Отпуск 2026.xlsx». Уже имеющиеся фамилии будут пропущены.</p></div></details></div>    <div id="dir-assignments" class="directory-screen"><div class="directory-table-head"><h3>Закрепления</h3><span id="directoryTotal-assignments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-assignments"></thead><tbody id="directoryRows-assignments"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Закрепление водителей за автомобилями</h2>
     <p class="muted">За автомобилем можно закрепить несколько водителей. Для каждого водителя назначается один автомобиль по умолчанию. При оформлении новой путёвки водитель может выбрать любую другую машину.</p>
@@ -734,7 +754,7 @@ for(const query of [tabletLayoutQuery,desktopLayoutQuery]){
 }
 
 const APP_VERSION='0.7.25';
-const TEST_BUILD_ID='test-20261104-driver-delete-02';
+const TEST_BUILD_ID='test-20261104-driver-docs-03';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -1764,6 +1784,17 @@ function openDriverCard(id){
  $('driverCardPatronymic').value=d.patronymic??legacyParts.slice(2).join(' ');
  $('driverCardBirthday').value=d.birthday||'';
  $('driverCardPhone').value=d.phone||'';
+ const docs=d.documents||{};
+ $('driverPassportNumber').value=docs.passport?.number||'';
+ $('driverPassportIssued').value=docs.passport?.issued||'';
+ $('driverPassportAuthority').value=docs.passport?.authority||'';
+ $('driverPassportCode').value=docs.passport?.code||'';
+ $('driverLicenseNumber').value=docs.license?.number||'';
+ $('driverLicenseIssued').value=docs.license?.issued||'';
+ $('driverLicenseExpires').value=docs.license?.expires||'';
+ $('driverLicenseCategories').value=docs.license?.categories||'';
+ $('driverSnils').value=docs.snils||'';
+ $('driverCardDocuments').open=false;
  $('driverCardVacationDays').value=d.vacationDays??36;
  $('driverCardStatus').value=d.status==='dismissed'?'dismissed':'active';
  $('driverCardDept').innerHTML='<option value="">Не указано</option>'+db.departments.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
@@ -1789,8 +1820,15 @@ function saveDriverCard(){
  if(!raw||!Number.isInteger(days)||days<0||days>366)return alert('Неверное количество дней отпуска.');
  if(db.drivers.some(x=>x.id!==d.id&&x.name.trim().toLowerCase()===name.toLowerCase()))return alert('Водитель с таким ФИО уже существует.');
  const primary=$('driverCardDefaultCar').value||null;
+ const documents={
+  passport:{number:$('driverPassportNumber').value.trim(),issued:$('driverPassportIssued').value,authority:$('driverPassportAuthority').value.trim(),code:$('driverPassportCode').value.trim()},
+  license:{number:$('driverLicenseNumber').value.trim(),issued:$('driverLicenseIssued').value,expires:$('driverLicenseExpires').value,categories:$('driverLicenseCategories').value.trim()},
+  snils:$('driverSnils').value.trim()
+ };
+ if(documents.license.issued&&documents.license.expires&&documents.license.expires<documents.license.issued)return alert('Дата окончания водительского удостоверения раньше даты выдачи.');
  const previous={...d,carIds:[...(d.carIds||[])]};
- Object.assign(d,{name,surname,firstName,patronymic,birthday,phone,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,defaultCarId:primary});
+ delete previous.documents;
+ Object.assign(d,{name,surname,firstName,patronymic,birthday,phone,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,defaultCarId:primary,documents});
  (db.editLog??=[]).push({time:new Date().toISOString(),action:'edit_driver',driverId:d.id,previous});
  persist();closeDriverCard();
 }
