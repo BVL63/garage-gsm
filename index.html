@@ -671,8 +671,7 @@ main{min-height:0;min-width:0}
 <div><label>Подразделение</label><select id="driverCardDept"></select></div>
 <div><label>Отпуск, календарных дней</label><input id="driverCardVacationDays" type="number" min="0" max="366" step="1"></div>
 <div><label>Статус</label><select id="driverCardStatus"><option value="active">Работает</option><option value="dismissed">Уволен</option></select></div>
-</div><div style="margin:10px 0"><label>Закреплённые автомобили</label><div id="driverCardCars"></div></div>
-<div><label>Основной автомобиль</label><select id="driverCardDefaultCar"></select></div>
+</div><div><label>Основной автомобиль</label><select id="driverCardDefaultCar"></select></div>
 <div style="display:flex;gap:10px;margin-top:14px"><button type="button" onclick="saveDriverCard()">Сохранить</button><button type="button" class="secondary" onclick="closeDriverCard()">Закрыть</button></div>
 </div><div class="scroll"><table class="directory-data"><thead id="directoryHead-drivers"></thead><tbody id="directoryRows-drivers"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h3>Водители</h3><div class="grid"><div><label>ФИО водителя</label><input id="newDriver" placeholder="Фамилия И.О."></div><div><label>Отпуск, календарных дней</label><input type="number" id="newDriverVacationDays" min="0" max="366" step="1" value="36"></div><div><label>&nbsp;</label><button onclick="addDriver()">Добавить водителя</button></div></div><button type="button" class="secondary" onclick="importVacation2026Drivers()">Добавить водителей из графика отпусков 2026</button><p class="muted">Из файла «Отпуск 2026.xlsx». Уже имеющиеся фамилии будут пропущены.</p></div></details></div>    <div id="dir-assignments" class="directory-screen"><div class="directory-table-head"><h3>Закрепления</h3><span id="directoryTotal-assignments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-assignments"></thead><tbody id="directoryRows-assignments"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Закрепление водителей за автомобилями</h2>
     <p class="muted">За автомобилем можно закрепить несколько водителей. Для каждого водителя назначается один автомобиль по умолчанию. При оформлении новой путёвки водитель может выбрать любую другую машину.</p>
@@ -1769,19 +1768,12 @@ function openDriverCard(id){
  $('driverCardStatus').value=d.status==='dismissed'?'dismissed':'active';
  $('driverCardDept').innerHTML='<option value="">Не указано</option>'+db.departments.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
  $('driverCardDept').value=d.dept||'';
- const assigned=new Set(d.carIds||[]);if(d.defaultCarId)assigned.add(d.defaultCarId);
- $('driverCardCars').innerHTML=db.cars.map(c=>'<label style="display:inline-flex;align-items:center;gap:5px;margin:6px 10px 6px 0"><input type="checkbox" class="driver-car-option" value="'+esc(c.id)+'"'+(assigned.has(c.id)?' checked':'')+'> '+esc(c.plate)+'</label>').join('')||'Автомобили отсутствуют';
- $('driverCardCars').querySelectorAll('input').forEach(input=>input.addEventListener('change',refreshDriverCardDefault));
- refreshDriverCardDefault();
- $('driverCardDefaultCar').value=d.defaultCarId||'';
+ const linkedIds=new Set(d.carIds||[]);
+ if(d.defaultCarId)linkedIds.add(d.defaultCarId);
+ $('driverCardDefaultCar').innerHTML='<option value="">Не назначен</option>'+db.cars.filter(c=>linkedIds.has(c.id)).map(c=>'<option value="'+esc(c.id)+'">'+esc(c.plate)+'</option>').join('');
+ $('driverCardDefaultCar').value=d.defaultCarId&&linkedIds.has(d.defaultCarId)?d.defaultCarId:'';
  $('driverCard').classList.remove('hidden');
  $('driverCard').scrollIntoView({block:'nearest'});
-}
-function refreshDriverCardDefault(){
- const field=$('driverCardDefaultCar'),was=field.value;
- const ids=[...document.querySelectorAll('#driverCardCars .driver-car-option:checked')].map(x=>x.value);
- field.innerHTML='<option value="">Не назначен</option>'+db.cars.filter(c=>ids.includes(c.id)).map(c=>'<option value="'+esc(c.id)+'">'+esc(c.plate)+'</option>').join('');
- field.value=ids.includes(was)?was:'';
 }
 function saveDriverCard(){
  const d=db.drivers.find(x=>x.id===driverCardCurrentId);if(!d)return;
@@ -1796,10 +1788,9 @@ function saveDriverCard(){
  if(birthday&&!/^\d{4}-\d{2}-\d{2}$/.test(birthday))return alert('Проверьте дату рождения.');
  if(!raw||!Number.isInteger(days)||days<0||days>366)return alert('Неверное количество дней отпуска.');
  if(db.drivers.some(x=>x.id!==d.id&&x.name.trim().toLowerCase()===name.toLowerCase()))return alert('Водитель с таким ФИО уже существует.');
- const ids=[...document.querySelectorAll('#driverCardCars .driver-car-option:checked')].map(x=>x.value);
  const primary=$('driverCardDefaultCar').value||null;
  const previous={...d,carIds:[...(d.carIds||[])]};
- Object.assign(d,{name,surname,firstName,patronymic,birthday,phone,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,carIds:ids,defaultCarId:primary});
+ Object.assign(d,{name,surname,firstName,patronymic,birthday,phone,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,defaultCarId:primary});
  (db.editLog??=[]).push({time:new Date().toISOString(),action:'edit_driver',driverId:d.id,previous});
  persist();closeDriverCard();
 }
