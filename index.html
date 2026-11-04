@@ -442,6 +442,11 @@ main{min-height:0;min-width:0}
 #driver .sheet-row input,#entryEdit .sheet-row input{border:1px solid #ccd8e4!important;border-radius:9px!important;background:#fff!important}
 #driver .sheet-row input:focus,#entryEdit .sheet-row input:focus{outline:2px solid #196aa7!important;outline-offset:1px!important}
 #driver .sheet-row input[readonly],#entryEdit .sheet-row input[readonly]{background:#e8eef4!important}
+</style><style id="waybill-edit-identity-unification">
+#entryEdit .waybill-identity{margin-bottom:0!important}
+#entryEdit .sheet-row output{font-size:clamp(17px,2.6vw,21px);color:#192638;overflow-wrap:anywhere}
+#entryEdit .sheet-row label{margin:0!important}
+@media(max-width:600px){#entryEdit .sheet-row output{font-size:clamp(17px,4.6vw,20px)}}
 </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
@@ -546,16 +551,16 @@ main{min-height:0;min-width:0}
 <button id="excelCommit" type="button" onclick="commitGarageExcel()" disabled>Загрузить проверенные строки</button>
 </details><div class="grid"><div><label>Подразделение</label><select id="deptFilter" onchange="render()"></select></div><div><label>Месяц</label><input type="month" id="monthFilter" onchange="render()"></div></div><div class="grid" id="stats"></div><div class="scroll"><table><thead><tr><th>Дата</th><th>Подразделение</th><th>Автомобиль</th><th>Водитель</th><th>Год / № листа</th><th>Пробег, км</th><th>Заправлено, л</th><th>Норма</th><th>Расход, л</th><th>Статус</th><th>Фото</th><th>Действие</th></tr></thead><tbody id="rows"></tbody></table></div><button onclick="exportCsv()">Экспорт CSV для Excel</button><button class="secondary" onclick="exportJson()">Резервная копия JSON (без фотографий)</button><label>Восстановить резервную копию JSON <input type="file" accept="application/json,.json" onchange="importJson(event)"></label></section><section id="managerDetail" class="panel hidden"><div class="journal-head"><h2>Путевой лист</h2><button type="button" class="secondary" onclick="tab('manager')">← Журнал</button></div><div id="managerSheetDetails"></div></section><section id="entryEdit" class="panel hidden compact-waybill-edit">
 <div class="journal-head"><h2>Путевой лист</h2><button type="button" class="secondary" onclick="cancelEntryEdit()">×</button></div>
-<div class="edit-identity"><span id="editCarSummary"></span><span id="editDriverSummary"></span></div>
+<div class="sheet-form waybill-identity"><div class="sheet-row"><label>Автомобиль</label><output id="editCarSummary"></output></div><div class="sheet-row"><label>Водитель</label><output id="editDriverSummary"></output></div></div>
 <div class="sheet-form">
 <div class="sheet-row"><label for="editSheetNumber">Путевой лист №</label><input id="editSheetNumber" inputmode="numeric"></div>
 <div class="sheet-row"><label for="editDateDisplay">Дата</label><input id="editDateDisplay" type="text" inputmode="numeric" placeholder="дд.мм.гг" maxlength="10" onblur="syncEditDate()"><input id="editDate" type="hidden"></div>
-<div class="waybill-input-choice"><span>Вводить:</span><button type="button" id="editModeKm" onclick="setWaybillInputMode('km')">Пробег</button><button type="button" id="editModeOdo" onclick="setWaybillInputMode('odo')">Одометр</button></div><div class="edit-subhead">Пробег <span id="editOdoSummary"></span></div>
+<div class="waybill-input-choice"><span>Вводить:</span><button type="button" id="editModeKm" onclick="setWaybillInputMode('km')">Пробег</button><button type="button" id="editModeOdo" onclick="setWaybillInputMode('odo')">Одометр</button></div><div class="sheet-row"><label>Одометр, выезд, км</label><output id="editOdoSummary"></output></div>
 <div class="sheet-row"><label for="editOdometer">Одометр, возвр., км</label><input id="editOdometer" type="number" inputmode="numeric" min="0" step="1" oninput="editOdoChanged()"></div>
 <div class="sheet-row"><label for="editKm">Пробег, км</label><input id="editKm" type="number" inputmode="numeric" min="0" step="1" oninput="editKmChanged()"></div>
-<div class="edit-subhead">Топливо, л <span id="editFuelSummary"></span></div>
+<div class="sheet-row"><label>Остаток выезд, л</label><output id="editFuelSummary"></output></div>
 <div class="sheet-row"><label for="editRefuel">Заправил, л</label><input id="editRefuel" type="number" inputmode="decimal" min="0" step="0.001" oninput="previewEntryEdit()"></div>
-<div class="edit-results"><span>Расход <strong id="editUsedSummary">—</strong></span><span>Остаток кон. <strong id="editEndSummary">—</strong></span></div>
+<div class="sheet-row"><label>Остаток расчётный, л</label><output id="editEndSummary">—</output></div><div class="sheet-row"><label>Расход по норме, л</label><output id="editUsedSummary">—</output></div>
 <input id="editCar" type="hidden"><input id="editDriver" type="hidden"><input id="editOdoStart" type="hidden"><input id="editFuelStart" type="hidden"><input id="editFuelUsed" type="hidden"><input id="editFuelEnd" type="hidden">
 </div><p id="editCalc" class="muted"></p>
 <div class="edit-actions"><button type="button" onclick="saveEntryEdit()">Сохранить</button><button type="button" id="editCloseWaybill" onclick="saveEntryEdit(true)">Закрыть</button><button type="button" class="secondary" onclick="cancelEntryEdit()">Отмена</button></div>
@@ -2308,8 +2313,8 @@ function startEntryEdit(id,mode){
  $('editOdoStart').value=e.odoStart??'';$('editFuelStart').value=e.fuelStart??'';
  $('editCarSummary').textContent=$('editCar').value;
  $('editDriverSummary').textContent=$('editDriver').value;
- $('editOdoSummary').textContent='Нач. '+(e.odoStart??'—');
- $('editFuelSummary').textContent='Нач. '+(e.fuelStart??'—');
+ $('editOdoSummary').textContent=e.odoStart??'—';
+ $('editFuelSummary').textContent=Number.isFinite(Number(e.fuelStart))?Number(e.fuelStart).toFixed(4):'—';
  $('editOdometer').value=e.odoEnd??'';$('editKm').value=e.km??'';$('editRefuel').value=e.fuel??'';previewEntryEdit();
  ['driver','driverJournal','manager','managerDetail','settings','documents'].forEach(x=>$(x).classList.add('hidden'));
  $('entryEdit').classList.remove('hidden');$('editCloseWaybill').hidden=isClosedEntry(e)||!!e.weekend||!!e.historical;window.scrollTo(0,0);
