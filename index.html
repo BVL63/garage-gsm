@@ -2131,8 +2131,6 @@ async function printDriverJournalMonth(){
  const w=window.open('','_blank');
  if(!w)return alert('Разрешите всплывающие окна для печати журнала.');
  const [year,monthNumber]=month.split('-').map(Number);
- w.document.write('<!doctype html><html lang="ru"><meta charset="utf-8"><title>Загрузка календаря</title><body style="font:16px Arial;padding:20px">Подготовка журнала за '+year+' год…</body></html>');
- w.document.close();
  const production=await garageProductionCalendar(year);
  const daysInMonth=new Date(Date.UTC(year,monthNumber,0)).getUTCDate();
  const entriesByDate=new Map();
