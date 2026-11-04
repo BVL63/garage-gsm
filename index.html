@@ -495,6 +495,18 @@ main{min-height:0;min-width:0}
 #entryEdit.unified-waybill-card .uw-header .uw-dismiss{flex:0 0 44px;margin-left:auto}
 #entryEdit.unified-waybill-card .uw-header-value .hidden{display:none!important}
 @media(max-width:520px){#entryEdit.unified-waybill-card .uw-header .uw-dismiss{flex-basis:34px;min-width:34px;min-height:40px;font-size:35px}#entryEdit.unified-waybill-card .uw-header h2{font-size:clamp(19px,5vw,25px)!important}}
+</style><style id="uw-compact-column-alignment">
+/* Align values directly after the longest labels; don't stretch editable fields. */
+#entryEdit.unified-waybill-card .uw-row{grid-template-columns:minmax(0,42%) minmax(0,58%)!important}
+#entryEdit.unified-waybill-card .uw-header{grid-template-columns:minmax(0,42%) minmax(0,58%)!important}
+#entryEdit.unified-waybill-card .uw-value{padding-left:6px!important}
+#entryEdit.unified-waybill-card .uw-value .uw-edit{width:100%!important;max-width:235px!important;flex:0 1 235px}
+#entryEdit.unified-waybill-card .uw-header-value #uwNumberInput{max-width:160px!important;width:100%!important}
+@media(max-width:520px){
+ #entryEdit.unified-waybill-card .uw-row{grid-template-columns:minmax(0,48%) minmax(0,52%)!important}
+ #entryEdit.unified-waybill-card .uw-header{grid-template-columns:minmax(0,48%) minmax(0,52%)!important}
+ #entryEdit.unified-waybill-card .uw-value .uw-edit{max-width:100%!important}
+}
 </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
