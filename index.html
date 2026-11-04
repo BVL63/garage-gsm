@@ -414,7 +414,14 @@ main{min-height:0;min-width:0}
 #journalDetail .waybill-unified-actions>button{height:45px!important;min-height:45px!important;border-radius:11px!important;padding:4px!important}
 #journalDetail .waybill-unified-actions>button svg{width:22px!important;height:22px!important}
 }
-</style><style>.test-environment-label{display:inline-flex!important;align-items:center;justify-content:center;cursor:default!important;font-weight:800!important;letter-spacing:.07em;color:#f8d76a!important;border-color:#f8d76a!important;font-size:14px!important;padding:0 10px!important;width:auto!important;min-width:68px!important}</style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
+</style><style>.test-environment-label{display:inline-flex!important;align-items:center;justify-content:center;cursor:default!important;font-weight:800!important;letter-spacing:.07em;color:#f8d76a!important;border-color:#f8d76a!important;font-size:14px!important;padding:0 10px!important;width:auto!important;min-width:68px!important}</style><style id="waybill-readable-columns">
+@media(max-width:600px){
+#journalDetail .waybill-info-row{grid-template-columns:minmax(0,60%) minmax(0,1fr)!important;gap:7px!important;padding:9px 0!important}
+#journalDetail .waybill-label{font-size:clamp(15px,4.2vw,18px)!important;line-height:1.25!important}
+#journalDetail .waybill-value,#journalDetail .waybill-value-accent{font-size:clamp(17px,4.6vw,20px)!important;line-height:1.25!important}
+#journalDetail .waybill-title-row strong{font-size:clamp(21px,5.6vw,26px)!important}
+}
+</style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
   <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button><button type="button" onclick="chooseMainMenu('obd')">Диагностика OBD2</button>
@@ -2163,10 +2170,10 @@ function navigateJournalPreview(direction){
 }
 function showJournalEntry(id,scroll=true){selectedJournalEntryId=id;
  document.querySelectorAll('#driverRows tr[data-entry-id]').forEach(tr=>tr.classList.toggle('latest-date-row',tr.dataset.entryId===id));const e=db.entries.find(x=>x.id===id);if(!e)return;const d=db.drivers.find(x=>x.id===e.driverId);const box=$('journalDetail');box.classList.remove('hidden');const car=db.cars.find(c=>c.id===e.carId);
- const line=(label,value)=>{const icon=label==='Дата'?'▦':label==='Автомобиль'?'🚙':label==='Водитель'?'♙':label.startsWith('Одометр, выезд')?'↗':label==='Заправил'?'⛽':label==='Остаток при выезде'?'◉':label.startsWith('Остаток')?'◉':label.startsWith('Расход')?'▤':label.startsWith('Одометр')?'↩':'▰';const highlight=label.startsWith('Одометр')||label.startsWith('Остаток')||label==='Заправил'?' waybill-value-accent':'';return '<div class="waybill-info-row"><div class="waybill-label"><span>'+esc(label)+'</span></div><div class="waybill-value'+highlight+'">'+esc(value)+'</div></div>';};
+ const line=(label,value)=>{const icon=label==='Дата'?'▦':label==='Автомобиль'?'🚙':label==='Водитель'?'♙':label.startsWith('Одометр, выезд, км')?'↗':label==='Заправил, л'?'⛽':label==='Остаток выезд, л'?'◉':label.startsWith('Остаток')?'◉':label.startsWith('Расход')?'▤':label.startsWith('Одометр')?'↩':'▰';const highlight=label.startsWith('Одометр')||label.startsWith('Остаток')||label==='Заправил, л'?' waybill-value-accent':'';return '<div class="waybill-info-row"><div class="waybill-label"><span>'+esc(label)+'</span></div><div class="waybill-value'+highlight+'">'+esc(value)+'</div></div>';};
  const dateRu=e.date?e.date.slice(8,10)+'.'+e.date.slice(5,7)+'.'+e.date.slice(0,4):'—';
  const present=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));
- const fuelFmt=v=>present(v)?Number(v).toFixed(4)+' л':'—';
+ const fuelFmt=v=>present(v)?Number(v).toFixed(4):'—';
  const kmValue=present(e.km)?Number(e.km):(present(e.odoEnd)&&present(e.odoStart)&&Number(e.odoEnd)>=Number(e.odoStart)?Number(e.odoEnd)-Number(e.odoStart):null);
  const fuelRate=car?norm(car,e.date):null;
  const fuelUsed=present(e.consumption)?Number(e.consumption):(kmValue!==null&&Number.isFinite(fuelRate)?round(kmValue*fuelRate/100):null);
@@ -2179,13 +2186,13 @@ function showJournalEntry(id,scroll=true){selectedJournalEntryId=id;
  +line('Дата',dateRu)
  +line('Автомобиль',car?.plate||'—')
  +line('Водитель',d?.name||'—')
- +line('Одометр, выезд',fmtOdo(e.odoStart)+' км')
- +line('Заправил',num(e.fuel).toFixed(1)+' л')
- +line('Остаток при выезде',num(e.fuelStart).toFixed(4)+' л')
- +line(estimated?'Остаток расчётный':'Остаток при возвращении',fuelFmt(fuelEnding))
- +line(estimated?'Расход по норме (расч.)':'Расход по норме',fuelFmt(fuelUsed))
- +line('Одометр, возвращение',e.odoEnd!==null&&e.odoEnd!==undefined&&e.odoEnd!==''?fmtOdo(e.odoEnd)+' км':'—')
- +line('Пробег',e.km!==null&&e.km!==undefined&&e.km!==''?String(e.km)+' км':(e.odoEnd!=null&&e.odoStart!=null&&Number(e.odoEnd)>=Number(e.odoStart)?String(Number(e.odoEnd)-Number(e.odoStart))+' км':'—'))
+ +line('Одометр, выезд, км',fmtOdo(e.odoStart))
+ +line('Заправил, л',num(e.fuel).toFixed(1))
+ +line('Остаток выезд, л',num(e.fuelStart).toFixed(4))
+ +line(estimated?'Остаток расчётный, л':'Остаток возвр., л',fuelFmt(fuelEnding))
+ +line(estimated?'Расход по норме (расч.), л':'Расход по норме, л',fuelFmt(fuelUsed))
+ +line('Одометр, возвр., км',e.odoEnd!==null&&e.odoEnd!==undefined&&e.odoEnd!==''?fmtOdo(e.odoEnd):'—')
+ +line('Пробег, км',e.km!==null&&e.km!==undefined&&e.km!==''?String(e.km):(e.odoEnd!=null&&e.odoStart!=null&&Number(e.odoEnd)>=Number(e.odoStart)?String(Number(e.odoEnd)-Number(e.odoStart)):'—'))
  +`</div>${e.photoId?`<button type="button" onclick="viewPhoto('${esc(e.photoId)}')">Фото</button>`:''}`;let actionHtml=`<div class="waybill-unified-actions ${isClosedEntry(e)?'waybill-nav-only':''}"><button class="waybill-edge-arrow" type="button" onclick="navigateJournalPreview(-1)" ${navigationIndex<=0?'disabled':''} aria-label="Предыдущая путёвка" title="Предыдущая путёвка">‹</button>`;
 if(!isClosedEntry(e)){
  actionHtml+='<button type="button" onclick="closeStoredEntry(\''+esc(e.id)+'\')" aria-label="Закрыть путевой лист" title="Закрыть путевой лист"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg></button><button type="button" onclick="startEntryEdit(\''+esc(e.id)+'\',\'driver\')" aria-label="Изменить путевой лист" title="Изменить"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16 4l4 4L9 19l-5 1 1-5L16 4z"/></svg></button><button type="button" class="danger" onclick="deleteEntryRecord(\''+esc(e.id)+'\',\'driver\')" aria-label="Удалить путевой лист" title="Удалить"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button>';
