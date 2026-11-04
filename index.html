@@ -659,7 +659,18 @@ main{min-height:0;min-width:0}
 <button type="button" id="uwNext" onclick="navigateUnifiedWaybill(1)" title="Следующая путёвка" aria-label="Следующая путёвка">›</button>
 </div>
 <div class="uw-save-actions hidden" id="uwSaveActions"><button type="button" onclick="saveUnifiedWaybill(false)" id="unifiedSaveButton">Сохранить</button><button type="button" onclick="saveUnifiedWaybill(true)" id="editCloseWaybill">Сохранить и закрыть путёвку</button><button type="button" class="secondary" onclick="cancelEntryEdit()">Отмена</button></div>
-</section><section id="settings" class="panel hidden"><p id="directoryMessage" class="good" role="status"></p><div id="directoryMenu" class="directory-menu"><button onclick="openDirectory('cars')">🚙 Автомобили</button><button onclick="openDirectory('makes')">🏭 Производители</button><button onclick="openDirectory('models')">🚗 Модели автомобилей</button><button onclick="openDirectory('variants')">🚘 Модификации</button><button onclick="openDirectory('engines')">⚙ Двигатели</button><button onclick="openDirectory('drivers')">👤 Водители</button><button onclick="openDirectory('departments')">🏢 Подразделения</button><button onclick="openDirectory('assignments')">🔗 Закрепление водителей</button><button onclick="openDirectory('norms')">⛽ Нормы ГСМ</button><button onclick="openDirectory('calendar')">▦ Производственный календарь</button></div><div id="dir-departments" class="directory-screen"><div class="directory-table-head"><h3>Подразделения</h3><span id="directoryTotal-departments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-departments"></thead><tbody id="directoryRows-departments"></tbody></table></div><details class="directory-edit" id="carsJournalEditor"><summary>Новый автомобиль</summary><div class="directory-edit-content"><h3>Подразделения</h3><div class="grid"><div><label>Подразделение</label><input id="newDept" placeholder="Название"></div><div><label>&nbsp;</label><button onclick="addDept()">Добавить подразделение</button></div></div></div></details></div><div id="dir-drivers" class="directory-screen"><div class="directory-table-head"><h3>Водители</h3><span id="directoryTotal-drivers" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-drivers"></thead><tbody id="directoryRows-drivers"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h3>Водители</h3><div class="grid"><div><label>ФИО водителя</label><input id="newDriver" placeholder="Фамилия И.О."></div><div><label>Отпуск, календарных дней</label><input type="number" id="newDriverVacationDays" min="0" max="366" step="1" value="36"></div><div><label>&nbsp;</label><button onclick="addDriver()">Добавить водителя</button></div></div><button type="button" class="secondary" onclick="importVacation2026Drivers()">Добавить водителей из графика отпусков 2026</button><p class="muted">Из файла «Отпуск 2026.xlsx». Уже имеющиеся фамилии будут пропущены.</p></div></details></div>    <div id="dir-assignments" class="directory-screen"><div class="directory-table-head"><h3>Закрепления</h3><span id="directoryTotal-assignments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-assignments"></thead><tbody id="directoryRows-assignments"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Закрепление водителей за автомобилями</h2>
+</section><section id="settings" class="panel hidden"><p id="directoryMessage" class="good" role="status"></p><div id="directoryMenu" class="directory-menu"><button onclick="openDirectory('cars')">🚙 Автомобили</button><button onclick="openDirectory('makes')">🏭 Производители</button><button onclick="openDirectory('models')">🚗 Модели автомобилей</button><button onclick="openDirectory('variants')">🚘 Модификации</button><button onclick="openDirectory('engines')">⚙ Двигатели</button><button onclick="openDirectory('drivers')">👤 Водители</button><button onclick="openDirectory('departments')">🏢 Подразделения</button><button onclick="openDirectory('assignments')">🔗 Закрепление водителей</button><button onclick="openDirectory('norms')">⛽ Нормы ГСМ</button><button onclick="openDirectory('calendar')">▦ Производственный календарь</button></div><div id="dir-departments" class="directory-screen"><div class="directory-table-head"><h3>Подразделения</h3><span id="directoryTotal-departments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-departments"></thead><tbody id="directoryRows-departments"></tbody></table></div><details class="directory-edit" id="carsJournalEditor"><summary>Новый автомобиль</summary><div class="directory-edit-content"><h3>Подразделения</h3><div class="grid"><div><label>Подразделение</label><input id="newDept" placeholder="Название"></div><div><label>&nbsp;</label><button onclick="addDept()">Добавить подразделение</button></div></div></div></details></div><div id="dir-drivers" class="directory-screen"><div class="directory-table-head"><h3>Водители</h3><span id="directoryTotal-drivers" class="muted"></span></div>
+<div id="driverCard" class="hidden" style="border:1px solid #bccfe0;border-radius:10px;padding:12px;margin:12px 0;background:#f8fbfe">
+<div style="display:flex;align-items:center;justify-content:space-between"><h3 id="driverCardTitle">Карточка водителя</h3><button type="button" class="secondary" onclick="closeDriverCard()">✕</button></div>
+<div class="grid">
+<div><label>ФИО водителя</label><input id="driverCardName"></div>
+<div><label>Подразделение</label><select id="driverCardDept"></select></div>
+<div><label>Отпуск, календарных дней</label><input id="driverCardVacationDays" type="number" min="0" max="366" step="1"></div>
+<div><label>Статус</label><select id="driverCardStatus"><option value="active">Работает</option><option value="dismissed">Уволен</option></select></div>
+</div><div style="margin:10px 0"><label>Закреплённые автомобили</label><div id="driverCardCars"></div></div>
+<div><label>Основной автомобиль</label><select id="driverCardDefaultCar"></select></div>
+<div style="display:flex;gap:10px;margin-top:14px"><button type="button" onclick="saveDriverCard()">Сохранить</button><button type="button" class="secondary" onclick="closeDriverCard()">Закрыть</button></div>
+</div><div class="scroll"><table class="directory-data"><thead id="directoryHead-drivers"></thead><tbody id="directoryRows-drivers"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h3>Водители</h3><div class="grid"><div><label>ФИО водителя</label><input id="newDriver" placeholder="Фамилия И.О."></div><div><label>Отпуск, календарных дней</label><input type="number" id="newDriverVacationDays" min="0" max="366" step="1" value="36"></div><div><label>&nbsp;</label><button onclick="addDriver()">Добавить водителя</button></div></div><button type="button" class="secondary" onclick="importVacation2026Drivers()">Добавить водителей из графика отпусков 2026</button><p class="muted">Из файла «Отпуск 2026.xlsx». Уже имеющиеся фамилии будут пропущены.</p></div></details></div>    <div id="dir-assignments" class="directory-screen"><div class="directory-table-head"><h3>Закрепления</h3><span id="directoryTotal-assignments" class="muted"></span></div><div class="scroll"><table class="directory-data"><thead id="directoryHead-assignments"></thead><tbody id="directoryRows-assignments"></tbody></table></div><details class="directory-edit"><summary>Добавить / изменить</summary><div class="directory-edit-content"><h2>Закрепление водителей за автомобилями</h2>
     <p class="muted">За автомобилем можно закрепить несколько водителей. Для каждого водителя назначается один автомобиль по умолчанию. При оформлении новой путёвки водитель может выбрать любую другую машину.</p>
     <div class="grid"><div><label>Водитель</label><select id="assignDriver" onchange="renderAssignments()"></select></div><div><label>Закрепить автомобиль</label><select id="assignCar"></select></div></div>
     <button onclick="assignCarToDriver()">Закрепить</button>
@@ -904,7 +915,10 @@ function renderDirectoryTables(){
     continue;
   }
   if(id==='drivers'){
-   body.innerHTML=db.drivers.map(d=>'<tr><td><div style="display:flex;align-items:center;justify-content:space-between;gap:6px"><span>'+esc(d.name)+'</span><button type="button" class="secondary" style="padding:5px 8px;font-size:12px;white-space:nowrap" aria-label="Удалить водителя '+esc(d.name)+'" onclick="deleteDuplicateDriver(\''+esc(d.id)+'\')">Удалить</button></div></td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" onchange="setDriverVacationDays(\''+esc(d.id)+'\',this.value)"></td></tr>').join('')||'<tr><td colspan="4">Записей пока нет</td></tr>';
+   body.innerHTML=db.drivers.map(d=>'<tr><td><div style="display:flex;align-items:center;justify-content:space-between;gap:7px"><button class="secondary driver-edit-action" type="button" data-id="'+esc(d.id)+'" style="text-align:left;flex:1;min-width:100px">'+esc(d.name)+'</button><button type="button" class="secondary driver-delete-action" data-id="'+esc(d.id)+'" style="padding:6px 8px">Удалить</button></div></td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" data-id="'+esc(d.id)+'" class="driver-vacation-inline"></td></tr>').join('')||'<tr><td colspan="4">Записей пока нет</td></tr>';
+   body.querySelectorAll('.driver-edit-action').forEach(btn=>btn.addEventListener('click',()=>openDriverCard(btn.dataset.id)));
+   body.querySelectorAll('.driver-delete-action').forEach(btn=>btn.addEventListener('click',()=>deleteDuplicateDriver(btn.dataset.id)));
+   body.querySelectorAll('.driver-vacation-inline').forEach(input=>input.addEventListener('change',()=>setDriverVacationDays(input.dataset.id,input.value)));
   }else body.innerHTML=def.rows.map(row=>'<tr>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
   if(count)count.textContent='Записей: '+def.rows.length;
   filterRegistryRows(id);
@@ -1715,7 +1729,7 @@ function filterRegistryRows(name){
  if(msg)msg.hidden=found!==0||!term;
 }
 
-function openDirectory(name,keepMakeFilter=false){prepareRegistryLayout();registryCurrent=name;if(name!=='cars')selectedCarJournalId=null;if(!keepMakeFilter){relatedMakeFilter=null;relatedModelFilter=null;}if(name!=='cars')closeCarCard();if(name==='calendar')setupGarageCalendarDirectory();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();if(registryNames[name])filterRegistryRows(name);document.getElementById('settings').scrollIntoView({block:'start'});}
+function openDirectory(name,keepMakeFilter=false){prepareRegistryLayout();registryCurrent=name;if(name!=='cars')selectedCarJournalId=null;if(!keepMakeFilter){relatedMakeFilter=null;relatedModelFilter=null;}if(name!=='cars')closeCarCard();if(name!=='drivers')closeDriverCard();if(name==='calendar')setupGarageCalendarDirectory();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();if(registryNames[name])filterRegistryRows(name);document.getElementById('settings').scrollIntoView({block:'start'});}
 function tab(name){if(name==='driver'){showDriverJournal();return;}['driver','driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents','obdPanel'].forEach(x=>$(x).classList.toggle('hidden',x!==name));if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);refresh();window.scrollTo(0,0)}function assignCarToDriver(){const d=db.drivers.find(x=>x.id===$('assignDriver').value),carId=$('assignCar').value;if(!d||!db.cars.some(c=>c.id===carId))return alert('Выберите водителя и автомобиль');d.carIds??=[];if(!d.carIds.includes(carId))d.carIds.push(carId);if(!d.defaultCarId)d.defaultCarId=carId;persist()}
 function removeAssignment(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d)return;d.carIds=(d.carIds||[]).filter(id=>id!==carId);if(d.defaultCarId===carId)d.defaultCarId=d.carIds[0]||null;persist()}
 function makeDefault(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d||!(d.carIds||[]).includes(carId))return;d.defaultCarId=carId;persist()}
@@ -1732,6 +1746,47 @@ function addDept(){let name=$('newDept').value.trim();if(!name)return alert('У�
  for(const name of missing)db.drivers.push({id:uid(),name,vacationDays:36});
  persist();
  alert('Добавлено водителей: '+missing.length+'. Пропущено уже имеющихся: '+(names.length-missing.length)+'.');
+}
+
+
+let driverCardCurrentId=null;
+function closeDriverCard(){driverCardCurrentId=null;$('driverCard').classList.add('hidden');}
+function openDriverCard(id){
+ const d=db.drivers.find(x=>x.id===id);if(!d)return;
+ driverCardCurrentId=id;
+ $('driverCardTitle').textContent='Карточка: '+d.name;
+ $('driverCardName').value=d.name;
+ $('driverCardVacationDays').value=d.vacationDays??36;
+ $('driverCardStatus').value=d.status==='dismissed'?'dismissed':'active';
+ $('driverCardDept').innerHTML='<option value="">Не указано</option>'+db.departments.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+ $('driverCardDept').value=d.dept||'';
+ const assigned=new Set(d.carIds||[]);if(d.defaultCarId)assigned.add(d.defaultCarId);
+ $('driverCardCars').innerHTML=db.cars.map(c=>'<label style="display:inline-flex;align-items:center;gap:5px;margin:6px 10px 6px 0"><input type="checkbox" class="driver-car-option" value="'+esc(c.id)+'"'+(assigned.has(c.id)?' checked':'')+'> '+esc(c.plate)+'</label>').join('')||'Автомобили отсутствуют';
+ $('driverCardCars').querySelectorAll('input').forEach(input=>input.addEventListener('change',refreshDriverCardDefault));
+ refreshDriverCardDefault();
+ $('driverCardDefaultCar').value=d.defaultCarId||'';
+ $('driverCard').classList.remove('hidden');
+ $('driverCard').scrollIntoView({block:'nearest'});
+}
+function refreshDriverCardDefault(){
+ const field=$('driverCardDefaultCar'),was=field.value;
+ const ids=[...document.querySelectorAll('#driverCardCars .driver-car-option:checked')].map(x=>x.value);
+ field.innerHTML='<option value="">Не назначен</option>'+db.cars.filter(c=>ids.includes(c.id)).map(c=>'<option value="'+esc(c.id)+'">'+esc(c.plate)+'</option>').join('');
+ field.value=ids.includes(was)?was:'';
+}
+function saveDriverCard(){
+ const d=db.drivers.find(x=>x.id===driverCardCurrentId);if(!d)return;
+ const name=$('driverCardName').value.trim().replace(/\s+/g,' ');
+ const raw=$('driverCardVacationDays').value.trim(),days=Number(raw);
+ if(!name)return alert('Укажите ФИО.');
+ if(!raw||!Number.isInteger(days)||days<0||days>366)return alert('Неверное количество дней отпуска.');
+ if(db.drivers.some(x=>x.id!==d.id&&x.name.trim().toLowerCase()===name.toLowerCase()))return alert('Водитель с таким ФИО уже существует.');
+ const ids=[...document.querySelectorAll('#driverCardCars .driver-car-option:checked')].map(x=>x.value);
+ const primary=$('driverCardDefaultCar').value||null;
+ const previous={...d,carIds:[...(d.carIds||[])]};
+ Object.assign(d,{name,dept:$('driverCardDept').value||null,vacationDays:days,status:$('driverCardStatus').value,carIds:ids,defaultCarId:primary});
+ (db.editLog??=[]).push({time:new Date().toISOString(),action:'edit_driver',driverId:d.id,previous});
+ persist();closeDriverCard();
 }
 
 function deleteDuplicateDriver(id){
