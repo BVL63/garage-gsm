@@ -421,6 +421,21 @@ main{min-height:0;min-width:0}
 #journalDetail .waybill-value,#journalDetail .waybill-value-accent{font-size:clamp(17px,4.6vw,20px)!important;line-height:1.25!important}
 #journalDetail .waybill-title-row strong{font-size:clamp(21px,5.6vw,26px)!important}
 }
+</style><style id="waybill-unified-edit-create">
+#driver.panel,#entryEdit.panel{background:#f0f4fa!important;color:#192638!important;border-radius:20px!important}
+#driver>.journal-head,#entryEdit>.journal-head{margin-bottom:12px!important}
+#driver>.journal-head h2,#entryEdit>.journal-head h2{font-size:clamp(22px,3.5vw,30px)!important;color:#192638!important;font-weight:750!important}
+#driver .sheet-form,#entryEdit .sheet-form{max-width:760px!important;width:100%!important;margin:10px 0 16px!important}
+#driver .sheet-row,#entryEdit .sheet-row{display:grid!important;grid-template-columns:minmax(0,60%) minmax(0,1fr)!important;gap:8px!important;align-items:center!important;min-height:52px!important;padding:9px 0!important;margin:0!important;border-bottom:1px solid #d2dce7!important;background:transparent!important}
+#driver .sheet-row label,#entryEdit .sheet-row label{font-size:clamp(16px,2.4vw,20px)!important;font-weight:650!important;color:#516275!important;line-height:1.25!important}
+#driver .sheet-row input,#driver .sheet-row select,#entryEdit .sheet-row input,#entryEdit .sheet-row select{font-size:clamp(17px,2.6vw,21px)!important;color:#192638!important;min-width:0!important;width:100%!important;box-sizing:border-box!important}
+#driver .sheet-row input[readonly],#entryEdit .sheet-row input[readonly]{background:#e8eef4!important}
+@media(max-width:600px){
+#driver.panel,#entryEdit.panel{padding:15px!important}
+#driver .sheet-row,#entryEdit .sheet-row{min-height:48px!important;padding:7px 0!important;grid-template-columns:minmax(0,60%) minmax(0,1fr)!important;gap:7px!important}
+#driver .sheet-row label,#entryEdit .sheet-row label{font-size:clamp(15px,4.2vw,18px)!important}
+#driver .sheet-row input,#driver .sheet-row select,#entryEdit .sheet-row input,#entryEdit .sheet-row select{font-size:clamp(17px,4.6vw,20px)!important;padding:7px 5px!important}
+}
 </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
@@ -507,8 +522,8 @@ main{min-height:0;min-width:0}
 <div class="sheet-row"><label for="driverId">Водитель</label><div><button type="button" class="secondary" id="driverPickButton" onclick="openSheetPicker('driverId')">Выбрать водителя</button><select id="driverId" onchange="applyDefaultCar()" hidden></select></div></div>
 <input type="hidden" id="year">
 <h3>Пробег</h3><div class="waybill-input-choice"><span>Вводить:</span><button type="button" id="newModeKm" onclick="setWaybillInputMode('km')">Пробег</button><button type="button" id="newModeOdo" onclick="setWaybillInputMode('odo')">Одометр</button></div>
-<div class="sheet-row"><label for="odoStart">Одометр нач.</label><input id="odoStart" readonly placeholder="Из базы"></div>
-<div class="sheet-row"><label for="odoEnd">Одометр кон.</label><input id="odoEnd" type="number" min="0" step="1" inputmode="numeric" oninput="changeOdo()"></div>
+<div class="sheet-row"><label for="odoStart">Одометр, выезд, км</label><input id="odoStart" readonly placeholder="Из базы"></div>
+<div class="sheet-row"><label for="odoEnd">Одометр, возвр., км</label><input id="odoEnd" type="number" min="0" step="1" inputmode="numeric" oninput="changeOdo()"></div>
 <div class="sheet-row"><label for="km">Пробег, км</label><input id="km" type="number" min="0" step="1" inputmode="numeric" oninput="changeKm()"></div>
 <h3>Топливо, л</h3>
 <div class="sheet-row"><label for="fuelStart">Остаток нач.</label><input id="fuelStart" readonly placeholder="Из базы"></div>
@@ -530,10 +545,10 @@ main{min-height:0;min-width:0}
 <div class="sheet-row"><label for="editSheetNumber">ПЛ №</label><input id="editSheetNumber" inputmode="numeric"></div>
 <div class="sheet-row"><label for="editDateDisplay">Дата</label><input id="editDateDisplay" type="text" inputmode="numeric" placeholder="дд.мм.гг" maxlength="10" onblur="syncEditDate()"><input id="editDate" type="hidden"></div>
 <div class="waybill-input-choice"><span>Вводить:</span><button type="button" id="editModeKm" onclick="setWaybillInputMode('km')">Пробег</button><button type="button" id="editModeOdo" onclick="setWaybillInputMode('odo')">Одометр</button></div><div class="edit-subhead">Пробег <span id="editOdoSummary"></span></div>
-<div class="sheet-row"><label for="editOdometer">Одометр кон.</label><input id="editOdometer" type="number" inputmode="numeric" min="0" step="1" oninput="editOdoChanged()"></div>
+<div class="sheet-row"><label for="editOdometer">Одометр, возвр., км</label><input id="editOdometer" type="number" inputmode="numeric" min="0" step="1" oninput="editOdoChanged()"></div>
 <div class="sheet-row"><label for="editKm">Пробег, км</label><input id="editKm" type="number" inputmode="numeric" min="0" step="1" oninput="editKmChanged()"></div>
 <div class="edit-subhead">Топливо, л <span id="editFuelSummary"></span></div>
-<div class="sheet-row"><label for="editRefuel">Заправил</label><input id="editRefuel" type="number" inputmode="decimal" min="0" step="0.001" oninput="previewEntryEdit()"></div>
+<div class="sheet-row"><label for="editRefuel">Заправил, л</label><input id="editRefuel" type="number" inputmode="decimal" min="0" step="0.001" oninput="previewEntryEdit()"></div>
 <div class="edit-results"><span>Расход <strong id="editUsedSummary">—</strong></span><span>Остаток кон. <strong id="editEndSummary">—</strong></span></div>
 <input id="editCar" type="hidden"><input id="editDriver" type="hidden"><input id="editOdoStart" type="hidden"><input id="editFuelStart" type="hidden"><input id="editFuelUsed" type="hidden"><input id="editFuelEnd" type="hidden">
 </div><p id="editCalc" class="muted"></p>
