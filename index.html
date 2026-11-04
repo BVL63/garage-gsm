@@ -886,7 +886,7 @@ function printCarsDirectory(){
 function renderDirectoryTables(){
  const data={
   departments:{columns:['Подразделение'],rows:db.departments.map(d=>[d.name])},
-  drivers:{columns:['Водитель','Основной автомобиль','Закреплено автомобилей','Отпуск, дней'],rows:db.drivers.map(d=>[d.name,db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—',(d.carIds||[]).length,d.vacationDays??36])},
+  drivers:{columns:['Водитель','Основной автомобиль','Закреплено автомобилей','Отпуск, дней','Действия'],rows:db.drivers.map(d=>[d.name,db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—',(d.carIds||[]).length,d.vacationDays??36])},
   assignments:{columns:['Водитель','Автомобиль','По умолчанию'],rows:db.drivers.flatMap(d=>(d.carIds||[]).map(id=>[d.name,db.cars.find(c=>c.id===id)?.plate||'—',d.defaultCarId===id?'Да':'Нет']))},
   cars:{columns:['Госномер','Модель','Подразделение','Нач. одометр','Нач. остаток, л'],rows:db.cars.map(c=>[c.plate,c.model||'—',db.departments.find(d=>d.id===c.dept)?.name||'—',fmtOdo(c.initialOdo),c.initialFuel==null?'—':Number(c.initialFuel).toFixed(4)])},
   norms:{columns:['Автомобиль','С даты','Лето, л/100 км','Зима, л/100 км','Приказ'],rows:db.cars.flatMap(c=>(c.norms||[]).map(n=>[c.plate,n.from,n.summer,n.winter,n.order||'—']))}
@@ -904,7 +904,7 @@ function renderDirectoryTables(){
     continue;
   }
   if(id==='drivers'){
-   body.innerHTML=db.drivers.map(d=>'<tr><td>'+esc(d.name)+'</td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" onchange="setDriverVacationDays(\''+esc(d.id)+'\',this.value)"></td></tr>').join('')||'<tr><td colspan="4">Записей пока нет</td></tr>';
+   body.innerHTML=db.drivers.map(d=>'<tr><td>'+esc(d.name)+'</td><td>'+esc(db.cars.find(c=>c.id===d.defaultCarId)?.plate||'—')+'</td><td>'+esc((d.carIds||[]).length)+'</td><td><input type="number" min="0" max="366" step="1" aria-label="Дней отпуска: '+esc(d.name)+'" style="width:82px;max-width:100%;padding:5px" value="'+esc(d.vacationDays??36)+'" onchange="setDriverVacationDays(\''+esc(d.id)+'\',this.value)"></td><td><button type="button" class="secondary" style="padding:6px 10px" onclick="deleteDuplicateDriver(\''+esc(d.id)+'\')">Удалить</button></td></tr>').join('')||'<tr><td colspan="5">Записей пока нет</td></tr>';
   }else body.innerHTML=def.rows.map(row=>'<tr>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+def.columns.length+'">Записей пока нет</td></tr>';
   if(count)count.textContent='Записей: '+def.rows.length;
   filterRegistryRows(id);
@@ -1733,6 +1733,36 @@ function addDept(){let name=$('newDept').value.trim();if(!name)return alert('У�
  persist();
  alert('Добавлено водителей: '+missing.length+'. Пропущено уже имеющихся: '+(names.length-missing.length)+'.');
 }
+
+function deleteDuplicateDriver(id){
+ const driver=db.drivers.find(d=>d.id===id);if(!driver)return;
+ const entries=db.entries.filter(e=>e.driverId===id);
+ const vacationRefs=[...(db.vacations||[]),...(db.vacationSchedules||[])].filter(v=>v.driverId===id);
+ const candidates=db.drivers.filter(d=>d.id!==id);
+ if(!candidates.length)return alert('Нельзя удалить единственного водителя.');
+ let target=null;
+ if(entries.length||vacationRefs.length){
+  const list=candidates.map((d,i)=>(i+1)+'. '+d.name).join('\n');
+  const answer=prompt('У водителя «'+driver.name+'» есть документы ('+entries.length+' путёвок).\nДля безопасного удаления выберите номер водителя, которому перенести документы:\n\n'+list);
+  if(answer===null)return;
+  const number=Number(answer.trim());
+  if(!Number.isInteger(number)||number<1||number>candidates.length)return alert('Неверный номер водителя. Ничего не изменено.');
+  target=candidates[number-1];
+ }
+ const question=target?'Объединить «'+driver.name+'» с «'+target.name+'»?\nПутёвок для переноса: '+entries.length+'.\nЗакрепления автомобилей будут объединены. Запись «'+driver.name+'» удалится.':'Удалить водителя «'+driver.name+'»?\nСвязанных путёвок нет.';
+ if(!confirm(question))return;
+ if(target){
+  for(const e of entries)e.driverId=target.id;
+  for(const v of [...(db.vacations||[]),...(db.vacationSchedules||[])])if(v.driverId===id)v.driverId=target.id;
+  target.carIds=[...new Set([...(target.carIds||[]),...(driver.carIds||[])])];
+  if(!target.defaultCarId)target.defaultCarId=driver.defaultCarId||target.carIds[0]||null;
+ }
+ (db.editLog??=[]).push({time:new Date().toISOString(),action:target?'merge_driver':'delete_driver',deletedDriver:{...driver},targetDriverId:target?.id||null,affectedWaybills:entries.length});
+ db.drivers=db.drivers.filter(d=>d.id!==id);
+ persist();
+ alert(target?'Водители объединены. Путёвки сохранены.':'Водитель удалён.');
+}
+
 function setDriverVacationDays(id,value){const driver=db.drivers.find(d=>d.id===id),days=Number(value);if(!driver)return;if(value.trim()===''||!Number.isInteger(days)||days<0||days>366){alert('Укажите целое число дней от 0 до 366.');renderDirectoryTables();return;}driver.vacationDays=days;persist();}
 function addDriver(){let name=$('newDriver').value.trim();if(!name)return alert('Укажите ФИО');const days=Number($('newDriverVacationDays').value);if($('newDriverVacationDays').value.trim()===''||!Number.isInteger(days)||days<0||days>366)return alert('Укажите целое число дней отпуска от 0 до 366.');const id=uid();db.drivers.push({id,name,vacationDays:days});$('newDriver').value='';$('newDriverVacationDays').value='36';persist();$('driverId').value=id;$('assignDriver').value=id;renderAssignments();$('directoryMessage').textContent='Водитель «'+name+'» добавлен и доступен в путёвке.'}function validNorm(s,w){return Number.isFinite(+s)&&Number.isFinite(+w)&&+s>0&&+w>0}function addCar(){
  const plate=$('newPlate').value.trim().toUpperCase();
