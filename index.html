@@ -1852,6 +1852,10 @@ function updateVacationActual(id){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(from)||(until&&!/^\d{4}-\d{2}-\d{2}$/.test(until))||(until&&until<from))return alert('Неверные фактические даты.');
  x.actualStart=from;x.actualEnd=until;(x.history??=[]).push({actualStart:from,actualEnd:until,at:new Date().toISOString()});persist();
 }
+function isVacationHoliday(date){
+ const md=String(date).slice(5);
+ return ['01-01','01-02','01-03','01-04','01-05','01-06','01-07','01-08','02-23','03-08','05-01','05-09','06-12','11-04'].includes(md);
+}
 let vacationExpandedMonth=-1;
 function toggleVacationMonth(index){vacationExpandedMonth=vacationExpandedMonth===index?-1:index;renderVacations();}
 function renderVacationCalendar(year,filter){
@@ -1861,7 +1865,7 @@ function renderVacationCalendar(year,filter){
  const drivers=db.drivers.filter(d=>(!filter||d.id===filter)&&all.some(x=>x.driverId===d.id)).sort((a,b)=>(db.departments.find(z=>z.id===a.dept)?.name||'Я Без подразделения').localeCompare(db.departments.find(z=>z.id===b.dept)?.name||'Я Без подразделения','ru')||a.name.localeCompare(b.name,'ru'));
  const cols=months.reduce((n,m,i)=>n+(vacationExpandedMonth===i?new Date(Number(year),i+1,0).getDate():1),0);
  const headings=months.map((m,i)=>'<th colspan="'+(vacationExpandedMonth===i?new Date(Number(year),i+1,0).getDate():1)+'" style="cursor:pointer;background:'+(vacationExpandedMonth===i?'#d6e8f7':'#e9eff5')+'" onclick="toggleVacationMonth('+i+')" title="Нажмите, чтобы '+(vacationExpandedMonth===i?'свернуть':'раскрыть дни')+'">'+m+(vacationExpandedMonth===i?' ▲':' ▼')+'</th>').join('');
- const dayHeader=months.map((m,i)=>vacationExpandedMonth===i?Array.from({length:new Date(Number(year),i+1,0).getDate()},(_,j)=>'<th style="min-width:28px;text-align:center">'+(j+1)+'</th>').join(''):'<th></th>').join('');
+ const dayHeader=months.map((m,i)=>vacationExpandedMonth===i?Array.from({length:new Date(Number(year),i+1,0).getDate()},(_,j)=>{const date=year+'-'+String(i+1).padStart(2,'0')+'-'+String(j+1).padStart(2,'0');return '<th title="'+(isVacationHoliday(date)?'Нерабочий праздничный день':'')+'" style="min-width:28px;text-align:center;'+(isVacationHoliday(date)?'background:#f9d5d5;color:#9e2222;':'')+'">'+(j+1)+'</th>'}).join(''):'<th></th>').join('');
  const rows=[];let currentDept=null;
  for(const d of drivers){
   const dept=db.departments.find(z=>z.id===d.dept)?.name||'Без подразделения';
@@ -1876,7 +1880,7 @@ function renderVacationCalendar(year,filter){
      const date=year+'-'+String(i+1).padStart(2,'0')+'-'+String(j+1).padStart(2,'0');
      const active=periods.filter(x=>x.start<=date&&x.end>=date);
      const conflict=active.some(overlaps);
-     return '<td title="'+esc(active.map(x=>vacationDate(x.start)+' — '+vacationDate(x.end)).join('; '))+'" style="text-align:center;min-width:28px;border:1px solid #d7dfe7;background:'+(conflict?'#ffe0b2':active.length?'#d6f0e1':'transparent')+'">'+(conflict?'⚠':active.length?'●':'')+'</td>';
+     const holiday=isVacationHoliday(date);return '<td title="'+esc((holiday?'Нерабочий праздничный день. ':'')+active.map(x=>vacationDate(x.start)+' — '+vacationDate(x.end)).join('; '))+'" style="text-align:center;min-width:28px;border:1px solid #d7dfe7;background:'+(conflict?'#ffe0b2':active.length?'#d6f0e1':holiday?'#f9d5d5':'transparent')+';'+(holiday?'box-shadow:inset 0 -3px #c53030;':'')+'">'+(conflict?'⚠':active.length?'●':holiday?'★':'')+'</td>';
     }).join('');
    }
    if(!periods.length)return '<td style="text-align:center;border:1px solid #d7dfe7">—</td>';
@@ -1887,7 +1891,7 @@ function renderVacationCalendar(year,filter){
   rows.push('<tr><td style="position:sticky;left:0;background:#fff;min-width:155px;border:1px solid #d7dfe7">'+esc(d.name)+'</td>'+cells.join('')+'<td style="text-align:center;font-weight:700;border:1px solid #d7dfe7">'+mine.reduce((n,x)=>n+x.days,0)+'</td></tr>');
  }
  el.innerHTML='<thead><tr><th rowspan="2" style="position:sticky;left:0;background:#e9eff5">Водитель</th>'+headings+'<th rowspan="2">Всего</th></tr><tr>'+dayHeader+'</tr></thead><tbody>'+(rows.join('')||'<tr><td colspan="'+(cols+2)+'">Нет отпусков за выбранный год</td></tr>')+'</tbody>';
- $('vacationCalendarTotals').textContent='Водителей: '+drivers.length+'. Периодов: '+all.filter(x=>!filter||x.driverId===filter).length+'. Зелёный — отпуск; оранжевый — пересечение в подразделении. Нажмите на месяц для просмотра дней.';
+ $('vacationCalendarTotals').textContent='Водителей: '+drivers.length+'. Периодов: '+all.filter(x=>!filter||x.driverId===filter).length+'. Зелёный — отпуск; оранжевый — пересечение; красный — праздничный день (красная черта сохраняется и в отпуске). Нажмите на месяц для просмотра дней.';
 }
 function renderVacations(){
  if(!$('vacationRows'))return;
