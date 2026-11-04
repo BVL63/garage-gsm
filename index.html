@@ -2301,7 +2301,7 @@ function startEntryEdit(id,mode,viewOnly=false){
  const reason=lastEditableEntry(id);if(reason&&!viewOnly)return alert(reason);
  closeJournalEntry();
  const e=db.entries.find(x=>x.id===id);
- editingEntryId=id;editingReturn=mode;
+ editingEntryId=id;editingReturn=mode;unifiedMode=viewOnly?'view':'edit';
  // Compact editor displays vehicle and driver in the identity row.
  $('editDate').value=e.date;$('editDateDisplay').value=editDateToDisplay(e.date);
  $('editSheetNumber').value=e.sheet||'';$('editSheetNumber').disabled=!!e.historical;
@@ -2317,7 +2317,7 @@ function startEntryEdit(id,mode,viewOnly=false){
  $('entryEdit').classList.remove('hidden');setUnifiedMode(viewOnly?'view':'edit');$('editCloseWaybill').hidden=isClosedEntry(e)||!!e.weekend||!!e.historical;window.scrollTo(0,0);
 }
 function cancelEntryEdit(){
- editingEntryId=null;$('entryEdit').classList.add('hidden');
+ editingEntryId=null;unifiedMode='view';$('entryEdit').classList.add('hidden');
  if(editingReturn==='manager')tab('manager');else showDriverJournal();
 }
 function saveEntryEdit(closeAfter=false){
