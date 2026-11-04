@@ -2096,12 +2096,32 @@ function driverJournalPrintData(e){
  if(!closed)fields.unshift(['Статус','Добавлена']);
  return {title,fields};
 }
-function printDriverJournalMonth(){
+// Production calendar for Russia: load once for a year and reuse from localStorage.
+const garageCalendarKey=year=>'allo_garage_calendar_ru_'+year;
+function garageCalendarValid(year,days){
+ const count=(Date.UTC(year+1,0,1)-Date.UTC(year,0,1))/86400000;
+ return typeof days==='string'&&days.length===count&&/^[0124]+$/.test(days)&&[...days].filter(x=>x==='1').length>=45;
+}
+async function garageProductionCalendar(year,refresh=false){
+ const key=garageCalendarKey(year);
+ if(!refresh)try{
+  const saved=JSON.parse(localStorage.getItem(key)||'null');
+  if(saved&&garageCalendarValid(year,saved.days))return {days:saved.days,source:'saved'};
+ }catch(e){}
+ try{
+  const response=await fetch('https://isdayoff.ru/api/getdata?year='+year+'&cc=ru&pre=1',{cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const days=(await response.text()).trim();
+  if(!garageCalendarValid(year,days))throw Error('Некорректный календарь');
+  try{localStorage.setItem(key,JSON.stringify({days,loadedAt:new Date().toISOString()}));}catch(e){}
+  return {days,source:'online'};
+ }catch(err){return {days:null,source:'fallback'};}
+}
+async function printDriverJournalMonth(){
  const carId=$('journalCar').value,month=journalMonth;
  const car=db.cars.find(c=>c.id===carId);
  if(!car||!/^\d{4}-\d{2}$/.test(month||''))return alert('Выберите автомобиль и месяц для печати.');
  const rows=db.entries.filter(e=>e.carId===carId&&e.date?.startsWith(month)).sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
- if(!rows.length)return alert('В выбранном месяце нет путевых листов.');
  const closed=rows.filter(isClosedEntry);
  const sum=k=>closed.reduce((n,e)=>n+(Number(e[k])||0),0);
  const latest=closed[closed.length-1];
@@ -2111,21 +2131,28 @@ function printDriverJournalMonth(){
  const w=window.open('','_blank');
  if(!w)return alert('Разрешите всплывающие окна для печати журнала.');
  const [year,monthNumber]=month.split('-').map(Number);
+ w.document.write('<!doctype html><html lang="ru"><meta charset="utf-8"><title>Загрузка календаря</title><body style="font:16px Arial;padding:20px">Подготовка журнала за '+year+' год…</body></html>');
+ w.document.close();
+ const production=await garageProductionCalendar(year);
  const daysInMonth=new Date(Date.UTC(year,monthNumber,0)).getUTCDate();
  const entriesByDate=new Map();
  rows.forEach(e=>{const items=entriesByDate.get(e.date)||[];items.push(e);entriesByDate.set(e.date,items)});
  const printRows=[];
  for(let day=1;day<=daysInMonth;day++){
   const date=month+'-'+String(day).padStart(2,'0');
-  const weekend=[0,6].includes(new Date(Date.UTC(year,monthNumber-1,day)).getUTCDay());
+  const nativeWeekend=[0,6].includes(new Date(Date.UTC(year,monthNumber-1,day)).getUTCDay());
+  const index=Math.floor((Date.UTC(year,monthNumber-1,day)-Date.UTC(year,0,1))/86400000);
+  const calendarCode=production.days?.[index];
+  const weekend=calendarCode===undefined?nativeWeekend:calendarCode==='1';
+  const holiday=weekend&&!nativeWeekend;
   const dayEntries=entriesByDate.get(date)||[null];
-  dayEntries.forEach(e=>printRows.push({date,weekend,e}));
+  dayEntries.forEach(e=>printRows.push({date,weekend,holiday,e}));
  }
- const bodyRows=printRows.map(({date,weekend,e},i)=>{
+ const bodyRows=printRows.map(({date,weekend,holiday,e},i)=>{
   const done=e&&isClosedEntry(e);
-  return '<tr'+(weekend?' class="calendar-weekend"':'')+'><td>'+(i+1)+'</td><td>'+esc(displayDate(date))+'</td><td>'+(e?esc(e.sheet||'')+(done?' ✓':''):'')+'</td><td>'+(e?esc(db.drivers.find(d=>d.id===e.driverId)?.name||''):'')+'</td><td>'+(done?esc(e.km??''):'')+'</td><td>'+(done?esc(fmtOdo(e.odoEnd)):'')+'</td><td>'+(done?num4(e.consumption):'')+'</td><td>'+(e&&e.fuel!=null&&Number(e.fuel)!==0?num1(e.fuel):'')+'</td><td>'+(done?num4(e.fuelEnd):'')+'</td></tr>';
+  return '<tr'+(weekend?' class="calendar-weekend'+(holiday?' calendar-holiday':'')+'"':'')+'><td>'+(i+1)+'</td><td>'+esc(displayDate(date))+'</td><td>'+(e?esc(e.sheet||'')+(done?' ✓':''):'')+'</td><td>'+(e?esc(db.drivers.find(d=>d.id===e.driverId)?.name||''):'')+'</td><td>'+(done?esc(e.km??''):'')+'</td><td>'+(done?esc(fmtOdo(e.odoEnd)):'')+'</td><td>'+(done?num4(e.consumption):'')+'</td><td>'+(e&&e.fuel!=null&&Number(e.fuel)!==0?num1(e.fuel):'')+'</td><td>'+(done?num4(e.fuelEnd):'')+'</td></tr>';
  }).join('');
- const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><title>Журнал путевых листов · '+esc(car.plate)+' · '+esc(month)+'</title><style>@page{size:A4 portrait;margin:10mm}body{font:10px Arial,sans-serif;color:#17283b;margin:10px}h1{font-size:19px;margin:0 0 4px}h2{font-size:14px;margin:0 0 14px}.meta{display:flex;justify-content:space-between;margin-bottom:12px;font-size:11px}table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:8.5px}th,td{border:1px solid #8295a6;padding:5px 2px;text-align:center;white-space:nowrap;overflow:hidden}td:nth-child(4){text-align:left;padding-left:4px;font-size:8px}th{background:#e9f1f8;white-space:normal}tbody tr.calendar-weekend td{background:#edf1f5!important}tbody tr.calendar-weekend td:nth-child(2){font-weight:bold;color:#a44a43}tfoot td{background:#dbece0;font-weight:bold;color:#17283b!important;text-decoration:none!important}tfoot td a, a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;pointer-events:none!important}.signatures{display:flex;justify-content:flex-end;margin-top:32px;font-size:13px}.signatures div{width:48%}.actions{margin:0 0 18px}.actions button{padding:9px 15px;margin-right:8px}th:nth-child(1){width:4%}th:nth-child(2){width:10%}th:nth-child(3){width:9%}th:nth-child(4){width:19%}th:nth-child(5){width:9%}th:nth-child(6){width:13%}th:nth-child(7){width:12%}th:nth-child(8){width:12%}th:nth-child(9){width:12%}thead{display:table-header-group}tr{break-inside:avoid}@media print{body{margin:0}.actions{display:none}th,tfoot td,tbody tr.calendar-weekend td{print-color-adjust:exact;-webkit-print-color-adjust:exact}}</style></head><body><div class="actions"><button id="journalPrintButton" type="button">Печать</button><button id="journalShareButton" type="button">Отправить PDF</button><button onclick="window.close()">Закрыть</button><p style="font-size:13px;color:#41576b">iPhone: для печати используйте меню Safari «Поделиться» → «Напечатать».</p></div><h2>Журнал учёта пробегов и топлива</h2><div class="meta"><span><b>Автомобиль:</b> '+esc(car.plate)+' · '+esc(car.model||'')+'</span><span><b>Месяц:</b> '+esc(month.slice(5)+'.'+month.slice(0,4))+'</span></div><table><thead><tr><th>№</th><th>Дата</th><th>№ путёвки</th><th>Водитель</th><th>Пробег, км</th><th>Одометр, км</th><th>Расход, л</th><th>Заправка, л</th><th>Остаток, л</th></tr></thead><tbody>'+bodyRows+'</tbody><tfoot><tr><td colspan="4">Итого: '+closed.length+' закрытых</td><td>'+sum('km')+'</td><td>'+(latest?esc(fmtOdo(latest.odoEnd)):'')+'</td><td>'+num4(sum('consumption'))+'</td><td>'+num1(sum('fuel'))+'</td><td>'+(latest?num4(latest.fuelEnd):'')+'</td></tr></tfoot></table><div class="signatures"><div>Зав. гаражом: _____________________________<small> (подпись, расшифровка)</small></div></div></body></html>';
+ const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><title>Журнал путевых листов · '+esc(car.plate)+' · '+esc(month)+'</title><style>@page{size:A4 portrait;margin:10mm}body{font:10px Arial,sans-serif;color:#17283b;margin:10px}h1{font-size:19px;margin:0 0 4px}h2{font-size:14px;margin:0 0 14px}.meta{display:flex;justify-content:space-between;margin-bottom:12px;font-size:11px}table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:8.5px}th,td{border:1px solid #8295a6;padding:5px 2px;text-align:center;white-space:nowrap;overflow:hidden}td:nth-child(4){text-align:left;padding-left:4px;font-size:8px}th{background:#e9f1f8;white-space:normal}tbody tr.calendar-weekend td{background:#edf1f5!important}tbody tr.calendar-holiday td{background:#f6e8e9!important}tbody tr.calendar-weekend td:nth-child(2){font-weight:bold;color:#a44a43}tfoot td{background:#dbece0;font-weight:bold;color:#17283b!important;text-decoration:none!important}tfoot td a, a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;pointer-events:none!important}.signatures{display:flex;justify-content:flex-end;margin-top:32px;font-size:13px}.signatures div{width:48%}.actions{margin:0 0 18px}.actions button{padding:9px 15px;margin-right:8px}th:nth-child(1){width:4%}th:nth-child(2){width:10%}th:nth-child(3){width:9%}th:nth-child(4){width:19%}th:nth-child(5){width:9%}th:nth-child(6){width:13%}th:nth-child(7){width:12%}th:nth-child(8){width:12%}th:nth-child(9){width:12%}thead{display:table-header-group}tr{break-inside:avoid}@media print{body{margin:0}.actions{display:none}th,tfoot td,tbody tr.calendar-weekend td,tbody tr.calendar-holiday td{print-color-adjust:exact;-webkit-print-color-adjust:exact}}</style></head><body><div class="actions"><button id="journalPrintButton" type="button">Печать</button><button id="journalShareButton" type="button">Отправить PDF</button><button onclick="window.close()">Закрыть</button><p style="font-size:13px;color:#41576b">iPhone: для печати используйте меню Safari «Поделиться» → «Напечатать».</p></div><h2>Журнал учёта пробегов и топлива</h2><p class="calendar-status" style="font-size:9px;color:#617186;margin:0 0 6px">'+(production.days?'Производственный календарь РФ, '+year+' г.':'Производственный календарь не загружен: отмечены только субботы и воскресенья')+'</p><div class="meta"><span><b>Автомобиль:</b> '+esc(car.plate)+' · '+esc(car.model||'')+'</span><span><b>Месяц:</b> '+esc(month.slice(5)+'.'+month.slice(0,4))+'</span></div><table><thead><tr><th>№</th><th>Дата</th><th>№ путёвки</th><th>Водитель</th><th>Пробег, км</th><th>Одометр, км</th><th>Расход, л</th><th>Заправка, л</th><th>Остаток, л</th></tr></thead><tbody>'+bodyRows+'</tbody><tfoot><tr><td colspan="4">Итого: '+closed.length+' закрытых</td><td>'+sum('km')+'</td><td>'+(latest?esc(fmtOdo(latest.odoEnd)):'')+'</td><td>'+num4(sum('consumption'))+'</td><td>'+num1(sum('fuel'))+'</td><td>'+(latest?num4(latest.fuelEnd):'')+'</td></tr></tfoot></table><div class="signatures"><div>Зав. гаражом: _____________________________<small> (подпись, расшифровка)</small></div></div></body></html>';
  w.document.open();w.document.write(html);w.document.close();
  w.addEventListener('load',()=>{
   w.document.getElementById('journalPrintButton')?.addEventListener('click',()=>w.print());
