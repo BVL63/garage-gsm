@@ -534,7 +534,8 @@ main{min-height:0;min-width:0}
 </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
-  <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button><button type="button" onclick="chooseMainMenu('obd')">Диагностика OBD2</button>
+  <button type="button" onclick="chooseMainMenu('manager')">Журнал зав. гаражом</button>
+  <button type="button" onclick="chooseMainMenu('vacations')">График отпусков</button><button type="button" onclick="chooseMainMenu('obd')">Диагностика OBD2</button>
  </div></details>
  <details class="nav-dropdown"><summary aria-label="Справочники">Справ. <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('cars')">Автомобили</button>
@@ -554,7 +555,33 @@ main{min-height:0;min-width:0}
   <button type="button" onclick="chooseMainMenu('backup')">Сохранить копию</button>
   <button type="button" onclick="chooseMainMenu('restore')">Восстановить</button>
  </div></details>
- </nav></header><main><section class="panel hidden" id="documents"><h2>Документы</h2><div class="documents-actions"><button type="button" onclick="showDriverJournal()">Журнал водителя</button><button type="button" onclick="tab('manager')">Журнал заведующего гаражом</button></div></section><style>
+ </nav></header><main>
+<section class="panel hidden" id="vacations">
+ <div class="journal-head"><h2>График отпусков</h2><button class="secondary" type="button" onclick="tab('driver')">✕</button></div>
+ <p class="muted">Тестовый локальный журнал. Заявки сохраняются только в данном браузере; синхронизация между устройствами и проверка прав доступа ещё не подключены.</p>
+ <div class="grid" style="margin-bottom:14px">
+  <div><label for="vacationYear">Год</label><input id="vacationYear" type="number" min="2020" max="2100" onchange="renderVacations()"></div>
+  <div><label for="vacationDriverFilter">Водитель</label><select id="vacationDriverFilter" onchange="renderVacations()"><option value="">Все водители</option></select></div>
+ </div>
+ <details id="vacationRequestForm" class="directory-edit" open>
+  <summary>Новая заявка на отпуск</summary>
+  <div class="directory-edit-content">
+   <div class="grid">
+    <div><label for="vacationApplicant">Водитель</label><select id="vacationApplicant" onchange="updateVacationPreview()"></select></div>
+    <div><label for="vacationSource">Кто вносит заявку</label><select id="vacationSource"><option value="driver">Водитель</option><option value="manager">Заведующий гаражом</option></select></div>
+    <div><label for="vacationFrom">Желаемое начало</label><input id="vacationFrom" type="date" onchange="updateVacationPreview()"></div>
+    <div><label for="vacationDays">Календарных дней</label><input id="vacationDays" type="number" min="1" max="366" value="14" oninput="updateVacationPreview()"></div>
+    <div style="grid-column:1/-1"><label for="vacationNote">Примечание</label><input id="vacationNote" placeholder="При необходимости"></div>
+   </div>
+   <p id="vacationPreview" class="muted"></p>
+   <button type="button" onclick="saveVacationRequest('submitted')">Подать заявку</button>
+   <button type="button" class="secondary" onclick="saveVacationRequest('draft')">Сохранить черновик</button>
+  </div>
+ </details>
+ <h3 style="margin:18px 0 7px">Заявки водителей</h3>
+ <div class="scroll"><table><thead><tr><th>Водитель</th><th>Период</th><th>Дней</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="vacationRows"></tbody></table></div>
+ <p id="vacationTotals" class="muted"></p>
+</section><section class="panel hidden" id="documents"><h2>Документы</h2><div class="documents-actions"><button type="button" onclick="showDriverJournal()">Журнал водителя</button><button type="button" onclick="tab('manager')">Журнал заведующего гаражом</button></div></section><style>
 #obdPanel{min-width:0;overflow:hidden}
 #obdPanel .journal-window-title{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
 #obdPanel .journal-window-title h2{font-size:clamp(19px,2.3vw,27px);line-height:1.2;margin:0;overflow-wrap:anywhere}
@@ -748,7 +775,7 @@ for(const query of [tabletLayoutQuery,desktopLayoutQuery]){
 }
 
 const APP_VERSION='0.7.25';
-const TEST_BUILD_ID='test-20261104-driver-docs-03';
+const TEST_BUILD_ID='test-20261104-vacation-requests-01';
 function showUpdateNotice(message,isError=false){
  const notice=document.getElementById('updateNotice');
  if(!notice)return;
@@ -831,7 +858,7 @@ window.addEventListener('load',()=>{
  updateOfflineFlag();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(err=>console.warn('Offline setup failed',err));
 });
-let db;const $=id=>document.getElementById(id);const today=()=>new Date().toLocaleDateString('en-CA');const uid=()=>((typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));const num=x=>Number(x||0);const fmtOdo=x=>x===null||x===undefined||x===''?'—':Number.isFinite(Number(x))?Math.trunc(Number(x)).toLocaleString('ru-RU').replace(/[\u00a0\u202f]/g,' '):String(x);const round=x=>Math.round((x+Number.EPSILON)*10000)/10000;function init(){document.getElementById('settings')?.classList.add('hidden');prepareRegistryLayout();try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db)db={departments:[{id:'d1',name:'Основное подразделение'}],drivers:[],cars:[],entries:[],winterStart:'11-01',winterEnd:'03-31'};db.entries??=[];db.cars??=[];db.drivers??=[];db.departments??=[];db.makes??=[];db.models??=[];db.engines??=[];db.variants??=[];db.obdReports??=[];db.productionCalendars??={};$('date').value=today();$('year').value=new Date().getFullYear();$('newFrom').value=today();$('normFrom').value=today();$('monthFilter').value=today().slice(0,7);journalMonth=today().slice(0,7);removeEmptyImportedWeekends();refresh();showDriverJournal()};function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Браузер не разрешил сохранить данные. Откройте программу в Safari.');}refresh()}function options(id,items,placeholder){const s=$(id),old=s.value;s.innerHTML='<option value="">'+placeholder+'</option>'+items.map(i=>`<option value="${esc(i.id)}">${esc(i.name)}</option>`).join('');if(items.some(i=>i.id===old))s.value=old}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function filterSheetChoice(id){
+let db;const $=id=>document.getElementById(id);const today=()=>new Date().toLocaleDateString('en-CA');const uid=()=>((typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));const num=x=>Number(x||0);const fmtOdo=x=>x===null||x===undefined||x===''?'—':Number.isFinite(Number(x))?Math.trunc(Number(x)).toLocaleString('ru-RU').replace(/[\u00a0\u202f]/g,' '):String(x);const round=x=>Math.round((x+Number.EPSILON)*10000)/10000;function init(){document.getElementById('settings')?.classList.add('hidden');prepareRegistryLayout();try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db)db={departments:[{id:'d1',name:'Основное подразделение'}],drivers:[],cars:[],entries:[],winterStart:'11-01',winterEnd:'03-31'};db.entries??=[];db.cars??=[];db.drivers??=[];db.departments??=[];db.makes??=[];db.models??=[];db.engines??=[];db.variants??=[];db.obdReports??=[];db.productionCalendars??={};db.vacationRequests??=[];$('vacationYear').value=new Date().getFullYear();$('vacationFrom').value=today();$('date').value=today();$('year').value=new Date().getFullYear();$('newFrom').value=today();$('normFrom').value=today();$('monthFilter').value=today().slice(0,7);journalMonth=today().slice(0,7);removeEmptyImportedWeekends();refresh();showDriverJournal()};function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Браузер не разрешил сохранить данные. Откройте программу в Safari.');}refresh()}function options(id,items,placeholder){const s=$(id),old=s.value;s.innerHTML='<option value="">'+placeholder+'</option>'+items.map(i=>`<option value="${esc(i.id)}">${esc(i.name)}</option>`).join('');if(items.some(i=>i.id===old))s.value=old}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function filterSheetChoice(id){
  const field=$(id==='vehicle'?'vehicleQuickFind':'driverQuickFind'),select=$(id);
  if(!field||!select)return;
  const query=field.value.trim().toLocaleLowerCase('ru').replace(/\s+/g,'');
@@ -877,7 +904,7 @@ function sheetPickerKeys(event){
  if(event.key==='Escape'){closeSheetPicker();return;}
  if(event.key==='Enter'){const first=$('sheetPickerResults').querySelector('.sheet-picker-result');if(first){event.preventDefault();first.click();}}
 }
-function refresh(){options('obdCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+(c.model||'')})),'Выберите автомобиль');options('assignDriver',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('assignCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('vehicle',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('journalCar',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('excelCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('excelDriverAll',db.drivers.map(d=>({id:d.id,name:d.name})),'— Выберите водителя —');options('normCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('driverId',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('newCarDept',db.departments,'Выберите подразделение');options('deptFilter',db.departments,'Все подразделения');$('winterStart').value=db.winterStart;$('winterEnd').value=db.winterEnd;render();renderNorms();renderAssignments();renderDirectoryTables();renderCatalogs();preview();renderDriverJournal();}
+function refresh(){options('obdCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+(c.model||'')})),'Выберите автомобиль');options('assignDriver',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('assignCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('vehicle',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('journalCar',db.cars.map(c=>({id:c.id,name:c.plate})),'Выберите автомобиль');options('excelCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('excelDriverAll',db.drivers.map(d=>({id:d.id,name:d.name})),'— Выберите водителя —');options('normCar',db.cars.map(c=>({id:c.id,name:c.plate+' · '+c.model})),'Выберите автомобиль');options('driverId',db.drivers.map(d=>({id:d.id,name:d.name})),'Выберите водителя');options('newCarDept',db.departments,'Выберите подразделение');options('deptFilter',db.departments,'Все подразделения');$('winterStart').value=db.winterStart;$('winterEnd').value=db.winterEnd;render();renderNorms();renderAssignments();renderDirectoryTables();renderCatalogs();preview();renderDriverJournal();renderVacations();}
 
 
 let selectedCarJournalId=null;
@@ -1656,6 +1683,7 @@ function chooseMainMenu(action){
  if(action==='driver'){showDriverJournal();return}
  if(action==='manager'){tab('manager');return}
  if(action==='obd'){tab('obdPanel');renderObdReports();return}
+ if(action==='vacations'){tab('vacations');renderVacations();return}
  if(['cars','drivers','departments','assignments','norms','makes','models','variants','engines','calendar'].includes(action)){
   tab('settings');openDirectory(action);return;
  }
@@ -1747,7 +1775,67 @@ function filterRegistryRows(name){
 }
 
 function openDirectory(name,keepMakeFilter=false){prepareRegistryLayout();registryCurrent=name;if(name!=='cars')selectedCarJournalId=null;if(!keepMakeFilter){relatedMakeFilter=null;relatedModelFilter=null;}if(name!=='cars')closeCarCard();if(name!=='drivers')closeDriverCard();if(name==='calendar')setupGarageCalendarDirectory();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();if(registryNames[name])filterRegistryRows(name);document.getElementById('settings').scrollIntoView({block:'start'});}
-function tab(name){if(name==='driver'){showDriverJournal();return;}['driver','driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents','obdPanel'].forEach(x=>$(x).classList.toggle('hidden',x!==name));if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);refresh();window.scrollTo(0,0)}function assignCarToDriver(){const d=db.drivers.find(x=>x.id===$('assignDriver').value),carId=$('assignCar').value;if(!d||!db.cars.some(c=>c.id===carId))return alert('Выберите водителя и автомобиль');d.carIds??=[];if(!d.carIds.includes(carId))d.carIds.push(carId);if(!d.defaultCarId)d.defaultCarId=carId;persist()}
+
+const VACATION_STATUS={draft:'Черновик',submitted:'Подана',review:'На согласовании',agreed:'Согласована',proposed:'Предложены другие даты',rejected:'Отклонена',approved:'Утверждена',leave:'В отпуске',completed:'Завершена',cancelled:'Отменена'};
+function vacationEnd(start,days){
+ const d=new Date(start+'T12:00:00');if(!start||!Number.isInteger(days)||days<1||Number.isNaN(d.getTime()))return '';
+ d.setDate(d.getDate()+days-1);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function vacationDate(s){if(!s)return '—';const p=s.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
+function vacationOverlap(a,b){return a.start<=b.end&&b.start<=a.end}
+function vacationOptions(id,all){
+ const sel=$(id);if(!sel)return;const old=sel.value;
+ sel.innerHTML=(all?'<option value="">Все водители</option>':'<option value="">Выберите водителя</option>')+db.drivers.map(d=>'<option value="'+esc(d.id)+'">'+esc(d.name)+'</option>').join('');
+ if(db.drivers.some(d=>d.id===old))sel.value=old;
+}
+function updateVacationPreview(){
+ const d=db.drivers.find(x=>x.id===$('vacationApplicant').value),start=$('vacationFrom').value,days=Number($('vacationDays').value),end=vacationEnd(start,days),box=$('vacationPreview');
+ if(!d||!end){box.textContent='Укажите водителя, начало и число дней.';return;}
+ const other=(db.vacationRequests||[]).filter(x=>x.driverId!==d.id&&!['rejected','cancelled','draft'].includes(x.status)&&vacationOverlap({start,end},{start:x.start,end:x.end}));
+ const already=(db.vacationRequests||[]).filter(x=>x.driverId===d.id&&!['rejected','cancelled','draft'].includes(x.status)&&x.start.slice(0,4)===start.slice(0,4)).reduce((sum,x)=>sum+x.days,0);
+ box.textContent='Планируемое окончание: '+vacationDate(end)+'. Норма: '+(d.vacationDays??36)+' дн.; заявлено: '+already+' дн.; после подачи: '+(already+days)+' дн. Совпадения: '+(other.length?other.map(x=>db.drivers.find(y=>y.id===x.driverId)?.name||'Водитель').join(', '):'нет')+'. Даты пока рассчитаны без исключения праздничных дней.';
+}
+function saveVacationRequest(status){
+ const driverId=$('vacationApplicant').value,start=$('vacationFrom').value,days=Number($('vacationDays').value),end=vacationEnd(start,days);
+ if(!driverId||!end||days>366)return alert('Выберите водителя и корректные даты отпуска.');
+ const overlaps=(db.vacationRequests||[]).filter(x=>x.driverId!==driverId&&!['draft','rejected','cancelled'].includes(x.status)&&vacationOverlap({start,end},x));
+ if(overlaps.length&&!confirm('На эти даты есть другие заявки. Продолжить?'))return;
+ db.vacationRequests.push({id:uid(),driverId,start,end,days,status,source:$('vacationSource').value,note:$('vacationNote').value.trim(),createdAt:new Date().toISOString(),history:[{status,at:new Date().toISOString()}]});
+ $('vacationNote').value='';persist();renderVacations();
+}
+function changeVacationStatus(id){
+ const x=db.vacationRequests.find(q=>q.id===id);if(!x)return;
+ const opts=['draft','submitted','review','agreed','proposed','rejected','approved','leave','completed','cancelled'];
+ const selection=prompt('Новый статус заявки:\\n'+opts.map((key,i)=>(i+1)+' — '+VACATION_STATUS[key]).join('\\n'),String(opts.indexOf(x.status)+1));
+ if(selection===null)return;
+ const i=Number(selection)-1;if(!Number.isInteger(i)||i<0||i>=opts.length)return alert('Неверный статус.');
+ if(!confirm('Изменить статус на «'+VACATION_STATUS[opts[i]]+'»?'))return;
+ x.status=opts[i];(x.history??=[]).push({status:x.status,at:new Date().toISOString()});persist();
+}
+function updateVacationActual(id){
+ const x=db.vacationRequests.find(q=>q.id===id);if(!x)return;
+ const from=prompt('Фактическое начало (ГГГГ-ММ-ДД)',x.actualStart||x.start);
+ if(from===null)return;
+ const until=prompt('Фактическое окончание (ГГГГ-ММ-ДД), можно оставить пустым',x.actualEnd||'');
+ if(until===null)return;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(from)||(until&&!/^\d{4}-\d{2}-\d{2}$/.test(until))||(until&&until<from))return alert('Неверные фактические даты.');
+ x.actualStart=from;x.actualEnd=until;(x.history??=[]).push({actualStart:from,actualEnd:until,at:new Date().toISOString()});persist();
+}
+function renderVacations(){
+ if(!$('vacationRows'))return;
+ vacationOptions('vacationApplicant',false);vacationOptions('vacationDriverFilter',true);
+ const year=$('vacationYear').value||String(new Date().getFullYear()),filter=$('vacationDriverFilter').value;
+ const list=(db.vacationRequests||[]).filter(x=>x.start.slice(0,4)===year&&(!filter||filter===x.driverId)).sort((a,b)=>a.start.localeCompare(b.start));
+ $('vacationRows').innerHTML=list.map(x=>{
+ const name=db.drivers.find(d=>d.id===x.driverId)?.name||'Водитель удалён';
+ const overlap=(db.vacationRequests||[]).filter(y=>y.id!==x.id&&y.driverId!==x.driverId&&!['draft','rejected','cancelled'].includes(y.status)&&vacationOverlap(x,y));
+ return '<tr><td>'+esc(name)+'</td><td>'+vacationDate(x.start)+'–'+vacationDate(x.end)+(x.actualStart?'<div class="muted">Факт: '+vacationDate(x.actualStart)+'–'+vacationDate(x.actualEnd)+'</div>':'')+(overlap.length?'<div class="warn">Совпадение: '+esc(overlap.map(y=>db.drivers.find(d=>d.id===y.driverId)?.name||'Водитель').join(', '))+'</div>':'')+'</td><td>'+x.days+'</td><td>'+esc(VACATION_STATUS[x.status]||x.status)+'</td><td><button type="button" class="secondary" onclick="changeVacationStatus(\''+esc(x.id)+'\')">Статус</button><button type="button" class="secondary" onclick="updateVacationActual(\''+esc(x.id)+'\')">Факт</button></td></tr>';
+ }).join('')||'<tr><td colspan="5">Заявок пока нет</td></tr>';
+ $('vacationTotals').textContent='Заявок за '+year+': '+list.length+'. Дней по заявкам: '+list.reduce((a,x)=>a+x.days,0)+'.';
+ updateVacationPreview();
+}
+
+function tab(name){if(name==='driver'){showDriverJournal();return;}['driver','driverJournal','manager','settings','managerDetail','entryEdit','appSettings','documents','obdPanel','vacations'].forEach(x=>$(x).classList.toggle('hidden',x!==name));if(location.hash==='#driver')history.replaceState(null,'',location.pathname+location.search);refresh();window.scrollTo(0,0)}function assignCarToDriver(){const d=db.drivers.find(x=>x.id===$('assignDriver').value),carId=$('assignCar').value;if(!d||!db.cars.some(c=>c.id===carId))return alert('Выберите водителя и автомобиль');d.carIds??=[];if(!d.carIds.includes(carId))d.carIds.push(carId);if(!d.defaultCarId)d.defaultCarId=carId;persist()}
 function removeAssignment(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d)return;d.carIds=(d.carIds||[]).filter(id=>id!==carId);if(d.defaultCarId===carId)d.defaultCarId=d.carIds[0]||null;persist()}
 function makeDefault(driverId,carId){const d=db.drivers.find(x=>x.id===driverId);if(!d||!(d.carIds||[]).includes(carId))return;d.defaultCarId=carId;persist()}
 function renderAssignments(){const selected=$('assignDriver').value,d=db.drivers.find(x=>x.id===selected);$('assignments').innerHTML=!d?'<p class="muted">Выберите водителя для просмотра закреплений.</p>':(d.carIds||[]).map(id=>{const c=db.cars.find(x=>x.id===id);if(!c)return '';return `<div style="padding:8px;border-bottom:1px solid #ddd">${esc(c.plate)} · ${esc(c.model)} ${d.defaultCarId===id?'<strong>— по умолчанию</strong>':`<button class="secondary" onclick="makeDefault('${d.id}','${id}')">По умолчанию</button>`} <button class="danger" onclick="removeAssignment('${d.id}','${id}')">Убрать</button></div>`}).join('')||'<p class="muted">Закреплений пока нет.</p>'}
