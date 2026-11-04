@@ -578,7 +578,7 @@ main{min-height:0;min-width:0}
    <button type="button" class="secondary" onclick="saveVacationRequest('draft')">Сохранить черновик</button>
   </div>
  </details>
- <h3 style="margin:18px 0 7px">Заявки водителей</h3>
+ <div style="margin:12px 0"><button type="button" class="secondary" onclick="importVacation2026Plan()">Загрузить график 2026 из Excel</button><p class="muted">25 периодов и 13 водителей из проверенного файла «Отпуск 2026.xlsx». Повторный импорт не создаёт дубликатов. Перед загрузкой показывается подтверждение.</p></div><h3 style="margin:18px 0 7px">Заявки водителей</h3>
  <div class="scroll"><table><thead><tr><th>Водитель</th><th>Период</th><th>Дней</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="vacationRows"></tbody></table></div>
  <p id="vacationTotals" class="muted"></p>
 </section><section class="panel hidden" id="documents"><h2>Документы</h2><div class="documents-actions"><button type="button" onclick="showDriverJournal()">Журнал водителя</button><button type="button" onclick="tab('manager')">Журнал заведующего гаражом</button></div></section><style>
@@ -1775,6 +1775,36 @@ function filterRegistryRows(name){
 }
 
 function openDirectory(name,keepMakeFilter=false){prepareRegistryLayout();registryCurrent=name;if(name!=='cars')selectedCarJournalId=null;if(!keepMakeFilter){relatedMakeFilter=null;relatedModelFilter=null;}if(name!=='cars')closeCarCard();if(name!=='drivers')closeDriverCard();if(name==='calendar')setupGarageCalendarDirectory();var menu=document.getElementById('directoryMenu');menu.style.display=name==='menu'?'grid':'none';document.querySelectorAll('.directory-screen').forEach(function(el){el.classList.toggle('active',el.id==='dir-'+name)});renderDirectoryTables();renderCatalogs();if(registryNames[name])filterRegistryRows(name);document.getElementById('settings').scrollIntoView({block:'start'});}
+
+
+const VACATION_2026_SOURCE="Киселев|2026-02-09|2026-02-22|14\nШпаков|2026-02-24|2026-03-12|17\nКиселев|2026-05-12|2026-05-15|4\nКиселев|2026-06-15|2026-06-19|5\nШпаков|2026-07-13|2026-07-31|19\nКиселев|2026-08-21|2026-09-02|13\nБахметьев|2026-03-16|2026-03-26|11\nБахметьев|2026-05-04|2026-05-08|5\nВинник|2026-05-11|2026-05-25|15\nКарнацкий|2026-07-01|2026-07-17|17\nВинник|2026-08-24|2026-09-13|21\nКарнацкий|2026-09-07|2026-09-25|19\nБахметьев|2026-09-28|2026-10-09|12\nКаминик|2026-06-15|2026-07-13|29\nКулеш|2026-07-20|2026-08-24|36\nКаминик|2026-10-01|2026-10-08|8\nМальцев|2026-07-27|2026-09-02|38\nДунаев|2026-08-17|2026-09-21|36\nДанилюк|2026-09-07|2026-10-13|37\nИлюхин|2026-05-21|2026-06-09|20\nИлюхин|2026-09-19|2026-09-30|12\nЛомов|2026-09-28|2026-10-11|14\nБогурцев|2026-02-09|2026-02-13|5\nБогурцев|2026-06-01|2026-06-11|11\nБогурцев|2026-08-24|2026-09-04|12";
+function importVacation2026Plan(){
+ const rows=VACATION_2026_SOURCE.split('\n').map(line=>{const [surname,start,end,days]=line.split('|');return {surname,start,end,days:Number(days)}});
+ const key=name=>String(name||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/[^а-я]/g,'');
+ const found=new Map(),missing=new Set();let duplicates=0;
+ for(const row of rows){
+  const matches=db.drivers.filter(d=>key(String(d.surname||d.name||'').split(/\s+/)[0])===key(row.surname));
+  if(matches.length>1)return alert('Несколько водителей с фамилией «'+row.surname+'». Уточните справочник перед импортом.');
+  if(matches.length===1)found.set(row.surname,matches[0]);else missing.add(row.surname);
+  if((db.vacationRequests||[]).some(x=>x.start===row.start&&x.end===row.end&&x.days===row.days&&
+     ((matches.length===1&&x.driverId===matches[0].id)||(x.source==='vacation-2026-excel'&&x.sourceSurname===row.surname))))duplicates++;
+ }
+ const total=rows.reduce((sum,x)=>sum+x.days,0);
+ if(rows.length!==25||total!==430)return alert('Контрольная сумма графика не совпала. Импорт отменён.');
+ const add=rows.length-duplicates;
+ if(!add)return alert('Все 25 периодов уже есть в графике. Повторная загрузка не нужна.');
+ if(!confirm('Импорт графика отпусков 2026 из Excel:\nВодителей: 13; периодов: 25; дней: 430.\nНовых водителей: '+missing.size+'; новых периодов: '+add+'; уже есть: '+duplicates+'.\n\nНовые периоды будут отмечены как «Утверждена» (план). Фактические даты останутся пустыми.\n\nПродолжить?'))return;
+ let addedDrivers=0,added=0;
+ for(const surname of missing){const d={id:uid(),name:surname,surname,vacationDays:36};db.drivers.push(d);found.set(surname,d);addedDrivers++;}
+ for(const row of rows){
+  const driver=found.get(row.surname);
+  if(db.vacationRequests.some(x=>x.driverId===driver.id&&x.start===row.start&&x.end===row.end&&x.days===row.days))continue;
+  db.vacationRequests.push({id:uid(),driverId:driver.id,start:row.start,end:row.end,days:row.days,status:'approved',source:'vacation-2026-excel',sourceSurname:row.surname,createdAt:new Date().toISOString(),history:[{status:'approved',at:new Date().toISOString(),note:'Импорт планового графика из файла Отпуск 2026.xlsx'}]});added++;
+ }
+ $('vacationYear').value='2026';$('vacationDriverFilter').value='';
+ persist();renderVacations();
+ alert('Импорт выполнен. Новых водителей: '+addedDrivers+'. Добавлено периодов: '+added+'. Ранее существовавшие данные не удалялись.');
+}
 
 const VACATION_STATUS={draft:'Черновик',submitted:'Подана',review:'На согласовании',agreed:'Согласована',proposed:'Предложены другие даты',rejected:'Отклонена',approved:'Утверждена',leave:'В отпуске',completed:'Завершена',cancelled:'Отменена'};
 function vacationEnd(start,days){
