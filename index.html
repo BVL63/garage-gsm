@@ -1821,15 +1821,16 @@ function vacationOptions(id,all){
 function updateVacationPreview(){
  const d=db.drivers.find(x=>x.id===$('vacationApplicant').value),start=$('vacationFrom').value,days=Number($('vacationDays').value),end=vacationEnd(start,days),box=$('vacationPreview');
  if(!d||!end){box.textContent='Укажите водителя, начало и число дней.';return;}
- const other=(db.vacationRequests||[]).filter(x=>x.driverId!==d.id&&!['rejected','cancelled','draft'].includes(x.status)&&vacationOverlap({start,end},{start:x.start,end:x.end}));
+ const other=(db.vacationRequests||[]).filter(x=>x.driverId!==d.id&&d.dept&&db.drivers.find(y=>y.id===x.driverId)?.dept===d.dept&&!['rejected','cancelled','draft'].includes(x.status)&&vacationOverlap({start,end},{start:x.start,end:x.end}));
  const already=(db.vacationRequests||[]).filter(x=>x.driverId===d.id&&!['rejected','cancelled','draft'].includes(x.status)&&x.start.slice(0,4)===start.slice(0,4)).reduce((sum,x)=>sum+x.days,0);
- box.textContent='Планируемое окончание: '+vacationDate(end)+'. Норма: '+(d.vacationDays??36)+' дн.; заявлено: '+already+' дн.; после подачи: '+(already+days)+' дн. Совпадения: '+(other.length?other.map(x=>db.drivers.find(y=>y.id===x.driverId)?.name||'Водитель').join(', '):'нет')+'. Даты пока рассчитаны без исключения праздничных дней.';
+ box.textContent='Планируемое окончание: '+vacationDate(end)+'. Норма: '+(d.vacationDays??36)+' дн.; заявлено: '+already+' дн.; после подачи: '+(already+days)+' дн. Совпадения: '+(other.length?other.map(x=>db.drivers.find(y=>y.id===x.driverId)?.name||'Водитель').join(', '):'нет')+'. '+(!d.dept?'Подразделение не указано — проверка пересечений неполная. ':'')+'Даты пока рассчитаны без исключения праздничных дней.';
 }
 function saveVacationRequest(status){
  const driverId=$('vacationApplicant').value,start=$('vacationFrom').value,days=Number($('vacationDays').value),end=vacationEnd(start,days);
  if(!driverId||!end||days>366)return alert('Выберите водителя и корректные даты отпуска.');
- const overlaps=(db.vacationRequests||[]).filter(x=>x.driverId!==driverId&&!['draft','rejected','cancelled'].includes(x.status)&&vacationOverlap({start,end},x));
- if(overlaps.length&&!confirm('На эти даты есть другие заявки. Продолжить?'))return;
+ const applicant=db.drivers.find(d=>d.id===driverId);const overlaps=(db.vacationRequests||[]).filter(x=>x.driverId!==driverId&&applicant?.dept&&db.drivers.find(d=>d.id===x.driverId)?.dept===applicant.dept&&!['draft','rejected','cancelled'].includes(x.status)&&vacationOverlap({start,end},x));
+ if(!applicant?.dept&&!confirm('У водителя не указано подразделение. Проверка пересечений неполная. Продолжить?'))return;
+ if(overlaps.length&&!confirm('В этом подразделении на эти даты есть другие заявки. Продолжить?'))return;
  db.vacationRequests.push({id:uid(),driverId,start,end,days,status,source:$('vacationSource').value,note:$('vacationNote').value.trim(),createdAt:new Date().toISOString(),history:[{status,at:new Date().toISOString()}]});
  $('vacationNote').value='';persist();renderVacations();
 }
@@ -1858,7 +1859,7 @@ function renderVacations(){
  const list=(db.vacationRequests||[]).filter(x=>x.start.slice(0,4)===year&&(!filter||filter===x.driverId)).sort((a,b)=>a.start.localeCompare(b.start));
  $('vacationRows').innerHTML=list.map(x=>{
  const name=db.drivers.find(d=>d.id===x.driverId)?.name||'Водитель удалён';
- const overlap=(db.vacationRequests||[]).filter(y=>y.id!==x.id&&y.driverId!==x.driverId&&!['draft','rejected','cancelled'].includes(y.status)&&vacationOverlap(x,y));
+ const currentDriver=db.drivers.find(d=>d.id===x.driverId);const overlap=(db.vacationRequests||[]).filter(y=>y.id!==x.id&&y.driverId!==x.driverId&&currentDriver?.dept&&db.drivers.find(d=>d.id===y.driverId)?.dept===currentDriver.dept&&!['draft','rejected','cancelled'].includes(y.status)&&vacationOverlap(x,y));
  return '<tr><td>'+esc(name)+'</td><td>'+vacationDate(x.start)+'–'+vacationDate(x.end)+(x.actualStart?'<div class="muted">Факт: '+vacationDate(x.actualStart)+'–'+vacationDate(x.actualEnd)+'</div>':'')+(overlap.length?'<div class="warn">Совпадение: '+esc(overlap.map(y=>db.drivers.find(d=>d.id===y.driverId)?.name||'Водитель').join(', '))+'</div>':'')+'</td><td>'+x.days+'</td><td>'+esc(VACATION_STATUS[x.status]||x.status)+'</td><td><button type="button" class="secondary" onclick="changeVacationStatus(\''+esc(x.id)+'\')">Статус</button><button type="button" class="secondary" onclick="updateVacationActual(\''+esc(x.id)+'\')">Факт</button></td></tr>';
  }).join('')||'<tr><td colspan="5">Заявок пока нет</td></tr>';
  $('vacationTotals').textContent='Заявок за '+year+': '+list.length+'. Дней по заявкам: '+list.reduce((a,x)=>a+x.days,0)+'.';
