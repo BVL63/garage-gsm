@@ -436,6 +436,12 @@ main{min-height:0;min-width:0}
 #driver .sheet-row label,#entryEdit .sheet-row label{font-size:clamp(15px,4.2vw,18px)!important}
 #driver .sheet-row input,#driver .sheet-row select,#entryEdit .sheet-row input,#entryEdit .sheet-row select{font-size:clamp(17px,4.6vw,20px)!important;padding:7px 5px!important}
 }
+</style><style id="waybill-shared-input-polish">
+#driver .sheet-form,#entryEdit .sheet-form{background:transparent!important}
+#driver .sheet-form h3,#entryEdit .edit-subhead{font-size:16px!important;color:#516275!important;margin:15px 0 5px!important}
+#driver .sheet-row input,#entryEdit .sheet-row input{border:1px solid #ccd8e4!important;border-radius:9px!important;background:#fff!important}
+#driver .sheet-row input:focus,#entryEdit .sheet-row input:focus{outline:2px solid #196aa7!important;outline-offset:1px!important}
+#driver .sheet-row input[readonly],#entryEdit .sheet-row input[readonly]{background:#e8eef4!important}
 </style></head><body><div id="updateNotice" class="update-notice hidden" role="status" aria-live="polite" onclick="this.classList.add('hidden')" title="Нажмите, чтобы закрыть"></div><div id="offlineFlag" class="offline-flag hidden" role="status">Нет интернета. Журнал сохраняется на этом телефоне; при первой возможности сделайте резервную копию.</div><header><div class="app-topline"><h1>АЛЛО ГАРАЖ</h1><span id="interfaceMode" class="interface-mode" aria-label="Режим интерфейса">Телефон</span><span class="app-exit-button test-environment-label" aria-label="Тестовая версия">ТЕСТ</span></div><nav class="main-nav" aria-label="Главное меню">
  <details class="nav-dropdown"><summary aria-label="Документы">Док-ты <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-list">
   <button type="button" onclick="chooseMainMenu('driver')">Журнал водителя</button>
@@ -526,10 +532,10 @@ main{min-height:0;min-width:0}
 <div class="sheet-row"><label for="odoEnd">Одометр, возвр., км</label><input id="odoEnd" type="number" min="0" step="1" inputmode="numeric" oninput="changeOdo()"></div>
 <div class="sheet-row"><label for="km">Пробег, км</label><input id="km" type="number" min="0" step="1" inputmode="numeric" oninput="changeKm()"></div>
 <h3>Топливо, л</h3>
-<div class="sheet-row"><label for="fuelStart">Остаток нач.</label><input id="fuelStart" readonly placeholder="Из базы"></div>
-<div class="sheet-row"><label for="fuel">Заправил</label><input id="fuel" type="number" min="0" step="0.001" inputmode="decimal" value="0" oninput="preview()"></div>
-<div class="sheet-row"><label for="fuelUsed">По норме</label><input id="fuelUsed" readonly></div>
-<div class="sheet-row"><label for="fuelEnd">Остаток кон.</label><input id="fuelEnd" readonly></div>
+<div class="sheet-row"><label for="fuelStart">Остаток выезд, л</label><input id="fuelStart" readonly placeholder="Из базы"></div>
+<div class="sheet-row"><label for="fuel">Заправил, л</label><input id="fuel" type="number" min="0" step="0.001" inputmode="decimal" value="0" oninput="preview()"></div>
+<div class="sheet-row"><label for="fuelUsed">Расход по норме, л</label><input id="fuelUsed" readonly></div>
+<div class="sheet-row"><label for="fuelEnd">Остаток расчётный, л</label><input id="fuelEnd" readonly></div>
 </div><p id="preview" class="muted"></p><button type="button" onclick="saveEntry(false)">Сохранить</button> <button type="button" onclick="confirmCloseNewWaybill()">Закрыть</button><p id="entryMessage"></p></section><section id="manager" class="panel hidden"><h2>Журнал заведующего гаражом</h2>
 <details style="margin:12px 0;padding:12px;border:1px solid #cbdbea;border-radius:10px">
 <summary style="cursor:pointer;font-weight:700">Импорт из Excel (.xlsx)</summary>
@@ -542,7 +548,7 @@ main{min-height:0;min-width:0}
 <div class="journal-head"><h2>Путевой лист</h2><button type="button" class="secondary" onclick="cancelEntryEdit()">×</button></div>
 <div class="edit-identity"><span id="editCarSummary"></span><span id="editDriverSummary"></span></div>
 <div class="sheet-form">
-<div class="sheet-row"><label for="editSheetNumber">ПЛ №</label><input id="editSheetNumber" inputmode="numeric"></div>
+<div class="sheet-row"><label for="editSheetNumber">Путевой лист №</label><input id="editSheetNumber" inputmode="numeric"></div>
 <div class="sheet-row"><label for="editDateDisplay">Дата</label><input id="editDateDisplay" type="text" inputmode="numeric" placeholder="дд.мм.гг" maxlength="10" onblur="syncEditDate()"><input id="editDate" type="hidden"></div>
 <div class="waybill-input-choice"><span>Вводить:</span><button type="button" id="editModeKm" onclick="setWaybillInputMode('km')">Пробег</button><button type="button" id="editModeOdo" onclick="setWaybillInputMode('odo')">Одометр</button></div><div class="edit-subhead">Пробег <span id="editOdoSummary"></span></div>
 <div class="sheet-row"><label for="editOdometer">Одометр, возвр., км</label><input id="editOdometer" type="number" inputmode="numeric" min="0" step="1" oninput="editOdoChanged()"></div>
